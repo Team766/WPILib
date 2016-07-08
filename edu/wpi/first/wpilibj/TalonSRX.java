@@ -7,6 +7,7 @@
 
 package edu.wpi.first.wpilibj;
 
+import interfaces.SpeedController;
 import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary.tResourceType;
 import edu.wpi.first.wpilibj.communication.UsageReporting;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;

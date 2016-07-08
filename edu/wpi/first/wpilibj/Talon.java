@@ -10,6 +10,7 @@ package edu.wpi.first.wpilibj;
 import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary.tResourceType;
 import edu.wpi.first.wpilibj.communication.UsageReporting;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import interfaces.SpeedController;
 
 /**
  * Cross the Road Electronics (CTRE) Talon and Talon SR Speed Controller
