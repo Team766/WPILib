@@ -12,6 +12,10 @@ import interfaces.GyroReader;
 /**
  * Interface for yaw rate gyros
  */
-public interface Gyro extends GyroReader{
+public interface Gyro extends GyroReader {
 
+	/**
+	 * Free the resources used by the gyro
+	 */
+	public void free();
 }
