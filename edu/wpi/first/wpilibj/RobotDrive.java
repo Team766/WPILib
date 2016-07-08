@@ -7,7 +7,6 @@
 
 package edu.wpi.first.wpilibj;
 
-import interfaces.SpeedController;
 import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary.tInstances;
 import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary.tResourceType;
 import edu.wpi.first.wpilibj.communication.UsageReporting;
@@ -67,11 +66,11 @@ public class RobotDrive implements MotorSafety {
   protected static final int kMaxNumberOfMotors = 4;
   protected double m_sensitivity;
   protected double m_maxOutput;
-  protected SpeedController m_frontLeftMotor;
-  protected SpeedController m_frontRightMotor;
-  protected SpeedController m_rearLeftMotor;
-  protected SpeedController m_rearRightMotor;
-  protected boolean m_allocatedSpeedControllers;
+  protected WPISpeedController m_frontLeftMotor;
+  protected WPISpeedController m_frontRightMotor;
+  protected WPISpeedController m_rearLeftMotor;
+  protected WPISpeedController m_rearRightMotor;
+  protected boolean m_allocatedWPISpeedControllers;
   protected byte m_syncGroup = 0;
   protected static boolean kArcadeRatioCurve_Reported = false;
   protected static boolean kTank_Reported = false;
@@ -96,7 +95,7 @@ public class RobotDrive implements MotorSafety {
     m_rearLeftMotor = new Talon(leftMotorChannel);
     m_frontRightMotor = null;
     m_rearRightMotor = new Talon(rightMotorChannel);
-    m_allocatedSpeedControllers = true;
+    m_allocatedWPISpeedControllers = true;
     setupMotorSafety();
     drive(0, 0);
   }
@@ -120,22 +119,22 @@ public class RobotDrive implements MotorSafety {
     m_rearRightMotor = new Talon(rearRightMotor);
     m_frontLeftMotor = new Talon(frontLeftMotor);
     m_frontRightMotor = new Talon(frontRightMotor);
-    m_allocatedSpeedControllers = true;
+    m_allocatedWPISpeedControllers = true;
     setupMotorSafety();
     drive(0, 0);
   }
 
   /**
-   * Constructor for RobotDrive with 2 motors specified as SpeedController
-   * objects. The SpeedController version of the constructor enables programs to
-   * use the RobotDrive classes with subclasses of the SpeedController objects,
+   * Constructor for RobotDrive with 2 motors specified as WPISpeedController
+   * objects. The WPISpeedController version of the constructor enables programs to
+   * use the RobotDrive classes with subclasses of the WPISpeedController objects,
    * for example, versions with ramping or reshaping of the curve to suit motor
    * bias or dead-band elimination.
    *$
-   * @param leftMotor The left SpeedController object used to drive the robot.
-   * @param rightMotor the right SpeedController object used to drive the robot.
+   * @param leftMotor The left WPISpeedController object used to drive the robot.
+   * @param rightMotor the right WPISpeedController object used to drive the robot.
    */
-  public RobotDrive(SpeedController leftMotor, SpeedController rightMotor) {
+  public RobotDrive(WPISpeedController leftMotor, WPISpeedController rightMotor) {
     if (leftMotor == null || rightMotor == null) {
       m_rearLeftMotor = m_rearRightMotor = null;
       throw new NullPointerException("Null motor provided");
@@ -146,27 +145,27 @@ public class RobotDrive implements MotorSafety {
     m_rearRightMotor = rightMotor;
     m_sensitivity = kDefaultSensitivity;
     m_maxOutput = kDefaultMaxOutput;
-    m_allocatedSpeedControllers = false;
+    m_allocatedWPISpeedControllers = false;
     setupMotorSafety();
     drive(0, 0);
   }
 
   /**
-   * Constructor for RobotDrive with 4 motors specified as SpeedController
+   * Constructor for RobotDrive with 4 motors specified as WPISpeedController
    * objects. Speed controller input version of RobotDrive (see previous
    * comments).
    *$
-   * @param rearLeftMotor The back left SpeedController object used to drive the
+   * @param rearLeftMotor The back left WPISpeedController object used to drive the
    *        robot.
-   * @param frontLeftMotor The front left SpeedController object used to drive
+   * @param frontLeftMotor The front left WPISpeedController object used to drive
    *        the robot
-   * @param rearRightMotor The back right SpeedController object used to drive
+   * @param rearRightMotor The back right WPISpeedController object used to drive
    *        the robot.
-   * @param frontRightMotor The front right SpeedController object used to drive
+   * @param frontRightMotor The front right WPISpeedController object used to drive
    *        the robot.
    */
-  public RobotDrive(SpeedController frontLeftMotor, SpeedController rearLeftMotor,
-      SpeedController frontRightMotor, SpeedController rearRightMotor) {
+  public RobotDrive(WPISpeedController frontLeftMotor, WPISpeedController rearLeftMotor,
+      WPISpeedController frontRightMotor, WPISpeedController rearRightMotor) {
     if (frontLeftMotor == null || rearLeftMotor == null || frontRightMotor == null
         || rearRightMotor == null) {
       m_frontLeftMotor = m_rearLeftMotor = m_frontRightMotor = m_rearRightMotor = null;
@@ -178,7 +177,7 @@ public class RobotDrive implements MotorSafety {
     m_rearRightMotor = rearRightMotor;
     m_sensitivity = kDefaultSensitivity;
     m_maxOutput = kDefaultMaxOutput;
-    m_allocatedSpeedControllers = false;
+    m_allocatedWPISpeedControllers = false;
     setupMotorSafety();
     drive(0, 0);
   }
@@ -753,7 +752,7 @@ public class RobotDrive implements MotorSafety {
    * Free the speed controllers if they were allocated locally
    */
   public void free() {
-    if (m_allocatedSpeedControllers) {
+    if (m_allocatedWPISpeedControllers) {
       if (m_frontLeftMotor != null) {
         ((PWM) m_frontLeftMotor).free();
       }

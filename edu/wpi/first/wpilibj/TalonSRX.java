@@ -7,7 +7,6 @@
 
 package edu.wpi.first.wpilibj;
 
-import interfaces.SpeedController;
 import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary.tResourceType;
 import edu.wpi.first.wpilibj.communication.UsageReporting;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -17,7 +16,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
  *$
  * @see CANTalon CANTalon for CAN control of Talon SRX
  */
-public class TalonSRX extends SafePWM implements SpeedController {
+public class TalonSRX extends SafePWM implements WPISpeedController {
   private boolean isInverted = false;
 
   /**

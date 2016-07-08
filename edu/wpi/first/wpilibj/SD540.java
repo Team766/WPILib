@@ -7,7 +7,6 @@
 
 package edu.wpi.first.wpilibj;
 
-import interfaces.SpeedController;
 import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary.tResourceType;
 import edu.wpi.first.wpilibj.communication.UsageReporting;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -15,7 +14,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 /**
  * Mindsensors SD540 Speed Controller
  */
-public class SD540 extends SafePWM implements SpeedController {
+public class SD540 extends SafePWM implements WPISpeedController {
   private boolean isInverted = false;
 
   /**

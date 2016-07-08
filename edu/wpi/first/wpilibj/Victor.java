@@ -7,7 +7,6 @@
 
 package edu.wpi.first.wpilibj;
 
-import interfaces.SpeedController;
 import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary.tResourceType;
 import edu.wpi.first.wpilibj.communication.UsageReporting;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -18,7 +17,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
  * The Vex Robotics Victor 884 Speed Controller can also be used with this class
  * but may need to be calibrated per the Victor 884 user manual.
  */
-public class Victor extends SafePWM implements SpeedController {
+public class Victor extends SafePWM implements WPISpeedController {
   private boolean isInverted = false;
 
   /**

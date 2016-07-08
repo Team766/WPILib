@@ -10,12 +10,11 @@ package edu.wpi.first.wpilibj;
 import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary.tResourceType;
 import edu.wpi.first.wpilibj.communication.UsageReporting;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import interfaces.SpeedController;
 
 /**
  * Cross the Road Electronics (CTRE) Talon and Talon SR Speed Controller
  */
-public class Talon extends SafePWM implements SpeedController {
+public class Talon extends SafePWM implements WPISpeedController {
   private boolean isInverted = false;
 
   /**

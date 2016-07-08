@@ -10,14 +10,13 @@ package edu.wpi.first.wpilibj;
 import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary.tResourceType;
 import edu.wpi.first.wpilibj.communication.UsageReporting;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
-import interfaces.SpeedController;
 
 /**
  * Texas Instruments / Vex Robotics Jaguar Speed Controller as a PWM device.
  *$
  * @see CANJaguar CANJaguar for CAN control
  */
-public class Jaguar extends SafePWM implements SpeedController {
+public class Jaguar extends SafePWM implements WPISpeedController {
   private boolean isInverted = false;
 
   /**

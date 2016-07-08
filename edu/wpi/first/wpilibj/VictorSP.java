@@ -7,7 +7,6 @@
 
 package edu.wpi.first.wpilibj;
 
-import interfaces.SpeedController;
 import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary.tResourceType;
 import edu.wpi.first.wpilibj.communication.UsageReporting;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
@@ -15,7 +14,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 /**
  * VEX Robotics Victor SP Speed Controller
  */
-public class VictorSP extends SafePWM implements SpeedController {
+public class VictorSP extends SafePWM implements WPISpeedController{
   private boolean isInverted = false;
 
   /**

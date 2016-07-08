@@ -10,9 +10,8 @@ package edu.wpi.first.wpilibj;
 import edu.wpi.first.wpilibj.livewindow.LiveWindowSendable;
 import edu.wpi.first.wpilibj.tables.ITable;
 import edu.wpi.first.wpilibj.tables.ITableListener;
-import interfaces.SpeedController;
 
-public interface CANSpeedController extends SpeedController, PIDInterface, LiveWindowSendable {
+public interface CANSpeedController extends WPISpeedController, PIDInterface, LiveWindowSendable {
   /**
    * Mode determines how the motor is controlled, used internally. This is meant
    * to be subclassed by enums
