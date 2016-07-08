@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.tables.ITable;
 import edu.wpi.first.wpilibj.tables.ITableListener;
 import edu.wpi.first.wpilibj.util.AllocationException;
 import edu.wpi.first.wpilibj.util.CheckedAllocationException;
+import interfaces.SolenoidController;
 
 /**
  * Solenoid class for running high voltage Digital Output.
@@ -23,7 +24,7 @@ import edu.wpi.first.wpilibj.util.CheckedAllocationException;
  * The Solenoid class is typically used for pneumatics solenoids, but could be
  * used for any device within the current spec of the PCM.
  */
-public class Solenoid extends SolenoidBase implements LiveWindowSendable {
+public class Solenoid extends SolenoidBase implements LiveWindowSendable, SolenoidController {
 
   private int m_channel; // /< The channel to control.
   private long m_solenoid_port;

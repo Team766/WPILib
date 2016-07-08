@@ -7,6 +7,8 @@
 
 package edu.wpi.first.wpilibj;
 
+import interfaces.EncoderReader;
+
 import java.nio.ByteOrder;
 import java.nio.ByteBuffer;
 
@@ -32,7 +34,7 @@ import edu.wpi.first.wpilibj.util.BoundaryException;
  * All encoders will immediately start counting - reset() them if you need them
  * to be zeroed before use.
  */
-public class Encoder extends SensorBase implements CounterBase, PIDSource, LiveWindowSendable {
+public class Encoder extends SensorBase implements CounterBase, PIDSource, LiveWindowSendable, EncoderReader {
   public enum IndexingType {
     kResetWhileHigh, kResetWhileLow, kResetOnFallingEdge, kResetOnRisingEdge
   }
