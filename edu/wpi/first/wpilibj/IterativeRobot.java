@@ -7,6 +7,7 @@
 
 package edu.wpi.first.wpilibj;
 
+import interfaces.MyRobot;
 import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary;
 import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary.tInstances;
 import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary.tResourceType;
@@ -41,7 +42,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
  * autonomousPeriodic() - teleopPeriodic() - testPeriodoc()
  *
  */
-public class IterativeRobot extends RobotBase {
+public class IterativeRobot extends RobotBase implements RobotInterface{
   private boolean m_disabledInitialized;
   private boolean m_autonomousInitialized;
   private boolean m_teleopInitialized;
