@@ -2,6 +2,7 @@ package edu.wpi.first.wpilibj;
 
 import interfaces.EncoderReader;
 import interfaces.GyroReader;
+import interfaces.JoystickReader;
 import interfaces.RobotProvider;
 import interfaces.SolenoidController;
 import interfaces.SpeedController;
@@ -49,6 +50,20 @@ public class WPIRobotProvider extends RobotProvider{
 	@Override
 	public GyroReader getGyro() {
 		return new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
+	}
+
+	@Override
+	public JoystickReader getLeftJoystick() {
+		return new Joystick(0);
+	}
+
+	@Override
+	public JoystickReader getRightJoystick() {
+		return new Joystick(1);
+	}
+	
+	public JoystickReader getBoxJoystick() {
+		return new Joystick(2);
 	}
 
 }

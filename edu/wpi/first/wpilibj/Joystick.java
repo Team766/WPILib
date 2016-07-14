@@ -7,8 +7,9 @@
 
 package edu.wpi.first.wpilibj;
 
-import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary.tResourceType;
+import interfaces.JoystickReader;
 import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary;
+import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary.tResourceType;
 import edu.wpi.first.wpilibj.communication.UsageReporting;
 
 /**
@@ -18,7 +19,7 @@ import edu.wpi.first.wpilibj.communication.UsageReporting;
  * instance for each joystick and the mapping of ports to hardware buttons
  * depends on the code in the driver station.
  */
-public class Joystick extends GenericHID {
+public class Joystick extends GenericHID implements JoystickReader{
 
   static final byte kDefaultXAxis = 0;
   static final byte kDefaultYAxis = 1;
