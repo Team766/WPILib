@@ -7,6 +7,7 @@
 
 package edu.wpi.first.wpilibj;
 
+import interfaces.ConfigFileReader;
 import interfaces.MyRobot;
 import interfaces.RobotProvider;
 
@@ -181,6 +182,7 @@ public abstract class RobotBase {
 	 * Starting point for the applications.
 	 */
 	public static void main(String args[]) {
+		ConfigFileReader.fileName = "";
 		RobotProvider.instance = new WPIRobotProvider();
 		
 		initializeHardwareConfiguration();

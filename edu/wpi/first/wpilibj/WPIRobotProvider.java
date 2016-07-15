@@ -9,61 +9,29 @@ import interfaces.SpeedController;
 
 public class WPIRobotProvider extends RobotProvider{
 
-	/**
-	 * Ports
-	 */
-	private final int LEFT_DRIVE = 1,
-					  RIGHT_DRIVE = 0,
-					  DIO_LDriveEncA = 16,	//Enc3
-					  DIO_LDriveEncB = 17,
-					  DIO_RDriveEncA = 14,	//Enc2
-					  DIO_RDriveEncB = 15,
-					  SOL_DRIVE_SHIFT = 0;
-	
-	
-	
 	@Override
-	public SpeedController getLeftDrive() {
-		return new Talon(LEFT_DRIVE);
+	public SpeedController getMotor(int index) {
+		return new Talon(index);
 	}
 
 	@Override
-	public SpeedController getRightDrive() {
-		return new Talon(RIGHT_DRIVE);
+	public EncoderReader getEncoder(int index1, int index2) {
+		return new Encoder(index1, index2);
 	}
 
 	@Override
-	public EncoderReader getLeftEncoder() {
-		return new Encoder(DIO_LDriveEncA, DIO_LDriveEncB);
+	public SolenoidController getSolenoid(int index) {
+		return new Solenoid(index);
 	}
 
 	@Override
-	public EncoderReader getRightEncoder() {
-		return new Encoder(DIO_RDriveEncA, DIO_RDriveEncB);
-	}
-
-	@Override
-	public SolenoidController getDriveShifter() {
-		return new Solenoid(0, SOL_DRIVE_SHIFT);
-	}
-
-	@Override
-	public GyroReader getGyro() {
+	public GyroReader getGyro(int index) {
 		return new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
 	}
 
 	@Override
-	public JoystickReader getLeftJoystick() {
-		return new Joystick(0);
-	}
-
-	@Override
-	public JoystickReader getRightJoystick() {
-		return new Joystick(1);
-	}
-	
-	public JoystickReader getBoxJoystick() {
-		return new Joystick(2);
+	public JoystickReader getJoystick(int index) {
+		return new Joystick(index);
 	}
 
 }
