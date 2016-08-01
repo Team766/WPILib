@@ -1,11 +1,14 @@
 package edu.wpi.first.wpilibj;
 
+import interfaces.CameraReader;
 import interfaces.EncoderReader;
 import interfaces.GyroReader;
 import interfaces.JoystickReader;
 import interfaces.RobotProvider;
 import interfaces.SolenoidController;
 import interfaces.SpeedController;
+import edu.wpi.first.wpilibj.vision.AxisCamera;
+import edu.wpi.first.wpilibj.vision.USBCamera;
 
 public class WPIRobotProvider extends RobotProvider{
 
@@ -27,6 +30,13 @@ public class WPIRobotProvider extends RobotProvider{
 	@Override
 	public GyroReader getGyro(int index) {
 		return new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
+	}
+	
+	@Override
+	public CameraReader getCamera(String id, String value) {
+		if(id.equals("axisCamera"))
+			return new AxisCamera(value);
+		return new USBCamera(value);
 	}
 
 	@Override

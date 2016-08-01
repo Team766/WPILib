@@ -7,25 +7,29 @@
 
 package edu.wpi.first.wpilibj.vision;
 
-import edu.wpi.first.wpilibj.image.ColorImage;
-import edu.wpi.first.wpilibj.image.HSLImage;
-import edu.wpi.first.wpilibj.image.NIVisionException;
+import static com.ni.vision.NIVision.Priv_ReadJPEGString_C;
+import static edu.wpi.first.wpilibj.Timer.delay;
+import interfaces.CameraReader;
 
 import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.nio.ByteBuffer;
 
-import static com.ni.vision.NIVision.Image;
-import static com.ni.vision.NIVision.Priv_ReadJPEGString_C;
-import static edu.wpi.first.wpilibj.Timer.delay;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
+import org.opencv.highgui.Highgui;
+
+import com.ni.vision.NIVision.Image;
 
 /**
  * Axis M1011 network camera
  */
-public class AxisCamera {
+public class AxisCamera implements CameraReader{
   public enum WhiteBalance {
     kAutomatic, kHold, kFixedOutdoor1, kFixedOutdoor2, kFixedIndoor, kFixedFluorescent1, kFixedFluorescent2,
   }
@@ -125,21 +129,31 @@ public class AxisCamera {
    *        image
    * @return true upon success, false on a failure
    */
-  public boolean getImage(ColorImage image) {
-    return this.getImage(image.image);
+  public Mat getImage() {
+  	Mat out;
+      if (m_imageData.limit() == 0) {
+      	System.out.println("Can't connect to Axis Cam");
+          return new Mat();
+      }
+
+      synchronized (m_imageDataLock) {
+      	MatOfByte in = new MatOfByte(m_imageData.array());
+      	try {
+				FileOutputStream fOut = new FileOutputStream(new File("/tmp/img.jpg"));
+				fOut.write(m_imageData.array());
+				fOut.close();
+			} catch (IOException e) {
+				System.out.println("Couldn't connect output stream");
+				e.printStackTrace();
+			}
+      	
+          out = Highgui.imdecode(in, Highgui.CV_LOAD_IMAGE_COLOR);
+      }
+
+      m_freshImage = false;
+      return out;
   }
 
-  /**
-   * Instantiate a new image object and fill it with the latest image from the
-   * camera.
-   *
-   * @return a pointer to an HSLImage object
-   */
-  public HSLImage getImage() throws NIVisionException {
-    HSLImage image = new HSLImage();
-    this.getImage(image);
-    return image;
-  }
 
   /**
    * Request a change in the brightness of the camera images.

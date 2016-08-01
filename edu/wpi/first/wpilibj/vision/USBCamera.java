@@ -7,17 +7,20 @@
 
 package edu.wpi.first.wpilibj.vision;
 
+import static edu.wpi.first.wpilibj.Timer.delay;
+import interfaces.CameraReader;
+
 import java.nio.ByteBuffer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.opencv.core.Mat;
+
 import com.ni.vision.NIVision;
+import com.ni.vision.NIVision.Image;
 import com.ni.vision.VisionException;
 
-import static com.ni.vision.NIVision.Image;
-import static edu.wpi.first.wpilibj.Timer.delay;
-
-public class USBCamera {
+public class USBCamera implements CameraReader {
   public static String kDefaultCameraName = "cam0";
 
   private static String ATTR_VIDEO_MODE = "AcquisitionAttributes::VideoMode";
@@ -61,6 +64,10 @@ public class USBCamera {
   public USBCamera(String name) {
     m_name = name;
     openCamera();
+  }
+  
+  public Mat getImage(){
+	  return null;
   }
 
   public synchronized void openCamera() {

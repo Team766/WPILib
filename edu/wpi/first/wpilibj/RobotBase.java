@@ -19,6 +19,8 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.jar.Manifest;
 
+import org.opencv.core.Core;
+
 import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary;
 import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary.tInstances;
 import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary.tResourceType;
@@ -182,6 +184,7 @@ public abstract class RobotBase {
 	 * Starting point for the applications.
 	 */
 	public static void main(String args[]) {
+		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		ConfigFileReader.fileName = "";
 		RobotProvider.instance = new WPIRobotProvider();
 		
