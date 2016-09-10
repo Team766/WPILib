@@ -218,7 +218,7 @@ public class DriverStation implements RobotState.Interface {
   private void reportJoystickUnpluggedWarning(String message) {
     double currentTime = Timer.getFPGATimestamp();
     if (currentTime > m_nextMessageTime) {
-      reportWarning(message, false);
+    	reportError(message, false);
       m_nextMessageTime = currentTime + JOYSTICK_UNPLUGGED_MESSAGE_INTERVAL;
     }
   }
@@ -611,9 +611,9 @@ public class DriverStation implements RobotState.Interface {
    *$
    * @param printTrace If true, append stack trace to error string
    */
-  public static void reportError(String error, boolean printTrace) {
-    reportErrorImpl(true, 1, error, printTrace);
-  }
+//  public static void reportError(String error, boolean printTrace) {
+//    reportErrorImpl(true, 1, error, printTrace);
+//  }
 
   /**
    * Report warning to Driver Station. Also prints error to System.err Optionally
@@ -621,31 +621,47 @@ public class DriverStation implements RobotState.Interface {
    *$
    * @param printTrace If true, append stack trace to warning string
    */
-  public static void reportWarning(String error, boolean printTrace) {
-    reportErrorImpl(false, 1, error, printTrace);
+//  public static void reportWarning(String error, boolean printTrace) {
+//    reportErrorImpl(false, 1, error, printTrace);
+//  }
+  
+  public static void reportError(String error, boolean printTrace) {
+	    String errorString = error;
+	    if (printTrace) {
+	      errorString += " at ";
+	      StackTraceElement[] traces = Thread.currentThread().getStackTrace();
+	      for (int i = 2; i < traces.length; i++) {
+	        errorString += traces[i].toString() + "\n";
+	      }
+	    }
+	    System.err.println(errorString);
+	    HALControlWord controlWord = FRCNetworkCommunicationsLibrary.HALGetControlWord();
+	    if (controlWord.getDSAttached()) {
+	      FRCNetworkCommunicationsLibrary.HALSetErrorData(errorString);
+	    }
   }
 
-  private static void reportErrorImpl(boolean is_error, int code, String error, boolean printTrace) {
-    StackTraceElement[] traces = Thread.currentThread().getStackTrace();
-    String locString;
-    if (traces.length > 3)
-      locString = traces[3].toString();
-    else
-      locString = new String();
-    boolean haveLoc = false;
-    String traceString = new String();
-    traceString = " at ";
-    for (int i = 3; i < traces.length; i++) {
-      String loc = traces[i].toString();
-      traceString += loc + "\n";
-      // get first user function
-      if (!haveLoc && !loc.startsWith("edu.wpi.first.wpilibj")) {
-        locString = loc;
-        haveLoc = true;
-      }
-    }
-    FRCNetworkCommunicationsLibrary.HALSendError(is_error, code, false, error, locString, printTrace ? traceString : "", true);
-  }
+//  private static void reportErrorImpl(boolean is_error, int code, String error, boolean printTrace) {
+//    StackTraceElement[] traces = Thread.currentThread().getStackTrace();
+//    String locString;
+//    if (traces.length > 3)
+//      locString = traces[3].toString();
+//    else
+//      locString = new String();
+//    boolean haveLoc = false;
+//    String traceString = new String();
+//    traceString = " at ";
+//    for (int i = 3; i < traces.length; i++) {
+//      String loc = traces[i].toString();
+//      traceString += loc + "\n";
+//      // get first user function
+//      if (!haveLoc && !loc.startsWith("edu.wpi.first.wpilibj")) {
+//        locString = loc;
+//        haveLoc = true;
+//      }
+//    }
+//    FRCNetworkCommunicationsLibrary.HALSendError(is_error, code, false, error, locString, printTrace ? traceString : "", true);
+//  }
 
   /**
    * Only to be used to tell the Driver Station what code you claim to be

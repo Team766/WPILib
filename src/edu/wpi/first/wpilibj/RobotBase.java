@@ -185,9 +185,13 @@ public abstract class RobotBase {
 	 * Starting point for the applications.
 	 */
 	public static void main(String args[]) {
-		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-		ConfigFileReader.fileName = "";
-		
+		System.setProperty("java.library.path", System.getProperty("java.library.path") + ":/usr/local/frc/lib" + ":/usr/local/lib/lib_OpenCV:/usr/local/lib/lib_OpenCV/java");
+		System.out.println(System.getProperty("java.library.path"));
+		System.load("/usr/local/lib/lib_OpenCV/java/lib" + Core.NATIVE_LIBRARY_NAME + ".so");
+		System.load("/usr/local/frc/lib/libFRC_NetworkCommunication.so");
+		//System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+		ConfigFileReader.fileName = "config.txt";
+
 		RobotProvider.instance = new WPIRobotProvider();
 		
 		initializeHardwareConfiguration();
@@ -214,21 +218,24 @@ public abstract class RobotBase {
 			}
 		}
 
-		RobotInterface robot;
+		MyRobot myRobot;
 		try {
-			robot = (IterativeRobot) Class.forName(robotName).newInstance();
+			myRobot = Class.forName(robotName).asSubclass(MyRobot.class).newInstance();
 		} catch (Throwable t) {
-			DriverStation.reportError(
+			/*DriverStation.reportError(
 					"ERROR Unhandled exception instantiating robot "
 							+ robotName + " " + t.toString() + " at "
-							+ Arrays.toString(t.getStackTrace()), false);
+							+ Arrays.toString(t.getStackTrace()), false);*/
+			System.err.println(t);
 			System.err.println("WARNING: Robots don't quit!");
 			System.err.println("ERROR: Could not instantiate robot "
 					+ robotName + "!");
 			System.exit(1);
 			return;
 		}
-
+		
+		IterativeRobot robot = new IterativeRobot(myRobot);
+		
 		File file = null;
 		FileOutputStream output = null;
 		try {
