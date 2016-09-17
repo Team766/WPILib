@@ -190,8 +190,8 @@ public abstract class RobotBase {
 		System.load("/usr/local/lib/lib_OpenCV/java/lib" + Core.NATIVE_LIBRARY_NAME + ".so");
 		System.load("/usr/local/frc/lib/libFRC_NetworkCommunication.so");
 		//System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
-		ConfigFileReader.fileName = "config.txt";
-
+		ConfigFileReader.fileName = "/home/lvuser/config.txt";
+		
 		RobotProvider.instance = new WPIRobotProvider();
 		
 		initializeHardwareConfiguration();
