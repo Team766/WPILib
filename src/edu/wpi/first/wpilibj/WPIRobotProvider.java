@@ -34,10 +34,17 @@ public class WPIRobotProvider extends RobotProvider{
 	}
 
 	@Override
+	//Gyro index values:
+	// -1 	= Spartan Gyro
+	// 	0+ 	= Analog Gyro on port index 
 	public GyroReader getGyro(int index) {
-		if(gyros[0] == null)
-			gyros[0] = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
-		return gyros[0];
+		if(gyros[index + 1] == null){
+			if(index == -1)
+				gyros[index + 1] = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
+			else
+				gyros[index + 1] = new AnalogGyro(index);
+		}
+		return gyros[index + 1];
 	}
 	
 	@Override

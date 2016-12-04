@@ -7,8 +7,8 @@
 
 package edu.wpi.first.wpilibj;
 
+import interfaces.GyroReader;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.livewindow.LiveWindowSendable;
 import edu.wpi.first.wpilibj.tables.ITable;
 
@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.tables.ITable;
  * GyroBase is the common base class for Gyro implementations such as
  * AnalogGyro.
  */
-public abstract class GyroBase extends SensorBase implements Gyro, PIDSource, LiveWindowSendable {
+public abstract class GyroBase extends SensorBase implements Gyro, PIDSource, LiveWindowSendable, GyroReader {
   private PIDSourceType m_pidSource = PIDSourceType.kDisplacement;
 
   /**
