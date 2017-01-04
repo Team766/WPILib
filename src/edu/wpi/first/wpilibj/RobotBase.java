@@ -191,6 +191,7 @@ public abstract class RobotBase {
 		System.load("/usr/local/frc/lib/libFRC_NetworkCommunication.so");
 		//System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		ConfigFileReader.fileName = "/home/lvuser/config.txt";
+		ConfigFileReader.fileName = "/home/lvuser/constants.csv";
 		
 		RobotProvider.instance = new WPIRobotProvider();
 		
