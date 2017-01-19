@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008-2016. All Rights Reserved.                        */
+/* Copyright (c) FIRST 2008-2017. All Rights Reserved.                        */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
@@ -7,61 +7,69 @@
 
 package edu.wpi.first.wpilibj;
 
+import edu.wpi.first.wpilibj.hal.AnalogJNI;
+import edu.wpi.first.wpilibj.hal.ConstantsJNI;
+import edu.wpi.first.wpilibj.hal.DIOJNI;
+import edu.wpi.first.wpilibj.hal.PDPJNI;
+import edu.wpi.first.wpilibj.hal.PWMJNI;
+import edu.wpi.first.wpilibj.hal.PortsJNI;
+import edu.wpi.first.wpilibj.hal.RelayJNI;
+import edu.wpi.first.wpilibj.hal.SolenoidJNI;
+
 /**
- * Base class for all sensors. Stores most recent status information as well as
- * containing utility functions for checking channels and error processing.
+ * Base class for all sensors. Stores most recent status information as well as containing utility
+ * functions for checking channels and error processing.
  */
-public abstract class SensorBase { // TODO: Refactor
-
-  // TODO: Move this to the HAL
-
+public abstract class SensorBase {
   /**
-   * Ticks per microsecond
+   * Ticks per microsecond.
    */
-  public static final int kSystemClockTicksPerMicrosecond = 40;
+  public static final int kSystemClockTicksPerMicrosecond =
+      ConstantsJNI.getSystemClockTicksPerMicrosecond();
   /**
-   * Number of digital channels per roboRIO
+   * Number of digital channels per roboRIO.
    */
-  public static final int kDigitalChannels = 26;
+  public static final int kDigitalChannels = PortsJNI.getNumDigitalChannels();
   /**
-   * Number of analog input channels
+   * Number of analog input channels per roboRIO.
    */
-  public static final int kAnalogInputChannels = 8;
+  public static final int kAnalogInputChannels = PortsJNI.getNumAnalogInputs();
   /**
-   * Number of analog output channels
+   * Number of analog output channels per roboRIO.
    */
-  public static final int kAnalogOutputChannels = 2;
+  public static final int kAnalogOutputChannels = PortsJNI.getNumAnalogOutputs();
   /**
-   * Number of solenoid channels per module
+   * Number of solenoid channels per module.
    */
-  public static final int kSolenoidChannels = 8;
+  public static final int kSolenoidChannels = PortsJNI.getNumSolenoidChannels();
   /**
-   * Number of solenoid modules
+   * Number of PWM channels per roboRIO.
    */
-  public static final int kSolenoidModules = 2;
+  public static final int kPwmChannels = PortsJNI.getNumPWMChannels();
   /**
-   * Number of PWM channels per roboRIO
+   * Number of relay channels per roboRIO.
    */
-  public static final int kPwmChannels = 20;
+  public static final int kRelayChannels = PortsJNI.getNumRelayHeaders();
   /**
-   * Number of relay channels per roboRIO
+   * Number of power distribution channels per PDP.
    */
-  public static final int kRelayChannels = 4;
+  public static final int kPDPChannels = PortsJNI.getNumPDPChannels();
   /**
-   * Number of power distribution channels
+   * Number of power distribution modules per PDP.
    */
-  public static final int kPDPChannels = 16;
+  public static final int kPDPModules = PortsJNI.getNumPDPModules();
   /**
-   * Number of power distribution modules
+   * Number of PCM Modules.
    */
-  public static final int kPDPModules = 63;
+  public static final int kPCMModules = PortsJNI.getNumPCMModules();
 
   private static int m_defaultSolenoidModule = 0;
 
   /**
-   * Creates an instance of the sensor base and gets an FPGA handle
+   * Creates an instance of the sensor base and gets an FPGA handle.
    */
-  public SensorBase() {}
+  public SensorBase() {
+  }
 
   /**
    * Set the default location for the Solenoid module.
@@ -79,101 +87,147 @@ public abstract class SensorBase { // TODO: Refactor
    * @param moduleNumber The solenoid module module number to check.
    */
   protected static void checkSolenoidModule(final int moduleNumber) {
+    if (!SolenoidJNI.checkSolenoidModule(moduleNumber)) {
+      StringBuilder buf = new StringBuilder();
+      buf.append("Requested solenoid module is out of range. Minimum: 0, Maximum: ")
+        .append(kPCMModules)
+        .append(", Requested: ")
+        .append(moduleNumber);
+      throw new IndexOutOfBoundsException(buf.toString());
+    }
   }
 
   /**
-   * Check that the digital channel number is valid. Verify that the channel
-   * number is one of the legal channel numbers. Channel numbers are 1-based.
+   * Check that the digital channel number is valid. Verify that the channel number is one of the
+   * legal channel numbers. Channel numbers are 0-based.
    *
    * @param channel The channel number to check.
    */
   protected static void checkDigitalChannel(final int channel) {
-    if (channel < 0 || channel >= kDigitalChannels) {
-      throw new IndexOutOfBoundsException("Requested digital channel number is out of range.");
+    if (!DIOJNI.checkDIOChannel(channel)) {
+      StringBuilder buf = new StringBuilder();
+      buf.append("Requested DIO channel is out of range. Minimum: 0, Maximum: ")
+        .append(kDigitalChannels)
+        .append(", Requested: ")
+        .append(channel);
+      throw new IndexOutOfBoundsException(buf.toString());
     }
   }
 
   /**
-   * Check that the digital channel number is valid. Verify that the channel
-   * number is one of the legal channel numbers. Channel numbers are 1-based.
+   * Check that the digital channel number is valid. Verify that the channel number is one of the
+   * legal channel numbers. Channel numbers are 0-based.
    *
    * @param channel The channel number to check.
    */
   protected static void checkRelayChannel(final int channel) {
-    if (channel < 0 || channel >= kRelayChannels) {
-      throw new IndexOutOfBoundsException("Requested relay channel number is out of range.");
+    if (!RelayJNI.checkRelayChannel(channel)) {
+      StringBuilder buf = new StringBuilder();
+      buf.append("Requested relay channel is out of range. Minimum: 0, Maximum: ")
+        .append(kRelayChannels)
+        .append(", Requested: ")
+        .append(channel);
+      throw new IndexOutOfBoundsException(buf.toString());
     }
   }
 
   /**
-   * Check that the digital channel number is valid. Verify that the channel
-   * number is one of the legal channel numbers. Channel numbers are 1-based.
+   * Check that the digital channel number is valid. Verify that the channel number is one of the
+   * legal channel numbers. Channel numbers are 0-based.
    *
    * @param channel The channel number to check.
    */
   protected static void checkPWMChannel(final int channel) {
-    if (channel < 0 || channel >= kPwmChannels) {
-      throw new IndexOutOfBoundsException("Requested PWM channel number is out of range.");
+    if (!PWMJNI.checkPWMChannel(channel)) {
+      StringBuilder buf = new StringBuilder();
+      buf.append("Requested PWM channel is out of range. Minimum: 0, Maximum: ")
+        .append(kPwmChannels)
+        .append(", Requested: ")
+        .append(channel);
+      throw new IndexOutOfBoundsException(buf.toString());
     }
   }
 
   /**
-   * Check that the analog input number is value. Verify that the analog input
-   * number is one of the legal channel numbers. Channel numbers are 0-based.
+   * Check that the analog input number is value. Verify that the analog input number is one of the
+   * legal channel numbers. Channel numbers are 0-based.
    *
    * @param channel The channel number to check.
    */
   protected static void checkAnalogInputChannel(final int channel) {
-    if (channel < 0 || channel >= kAnalogInputChannels) {
-      throw new IndexOutOfBoundsException("Requested analog input channel number is out of range.");
+    if (!AnalogJNI.checkAnalogInputChannel(channel)) {
+      StringBuilder buf = new StringBuilder();
+      buf.append("Requested analog input channel is out of range. Minimum: 0, Maximum: ")
+        .append(kAnalogInputChannels)
+        .append(", Requested: ")
+        .append(channel);
+      throw new IndexOutOfBoundsException(buf.toString());
     }
   }
 
   /**
-   * Check that the analog input number is value. Verify that the analog input
-   * number is one of the legal channel numbers. Channel numbers are 0-based.
+   * Check that the analog input number is value. Verify that the analog input number is one of the
+   * legal channel numbers. Channel numbers are 0-based.
    *
    * @param channel The channel number to check.
    */
   protected static void checkAnalogOutputChannel(final int channel) {
-    if (channel < 0 || channel >= kAnalogOutputChannels) {
-      throw new IndexOutOfBoundsException("Requested analog output channel number is out of range.");
+    if (!AnalogJNI.checkAnalogOutputChannel(channel)) {
+      StringBuilder buf = new StringBuilder();
+      buf.append("Requested analog output channel is out of range. Minimum: 0, Maximum: ")
+        .append(kAnalogOutputChannels)
+        .append(", Requested: ")
+        .append(channel);
+      throw new IndexOutOfBoundsException(buf.toString());
     }
   }
 
   /**
-   * Verify that the solenoid channel number is within limits. Channel numbers
-   * are 1-based.
+   * Verify that the solenoid channel number is within limits. Channel numbers are 0-based.
    *
    * @param channel The channel number to check.
    */
   protected static void checkSolenoidChannel(final int channel) {
-    if (channel < 0 || channel >= kSolenoidChannels) {
-      throw new IndexOutOfBoundsException("Requested solenoid channel number is out of range.");
+    if (!SolenoidJNI.checkSolenoidChannel(channel)) {
+      StringBuilder buf = new StringBuilder();
+      buf.append("Requested solenoid channel is out of range. Minimum: 0, Maximum: ")
+        .append(kSolenoidChannels)
+        .append(", Requested: ")
+        .append(channel);
+      throw new IndexOutOfBoundsException(buf.toString());
     }
   }
 
   /**
-   * Verify that the power distribution channel number is within limits. Channel
-   * numbers are 1-based.
+   * Verify that the power distribution channel number is within limits. Channel numbers are
+   * 0-based.
    *
    * @param channel The channel number to check.
    */
   protected static void checkPDPChannel(final int channel) {
-    if (channel < 0 || channel >= kPDPChannels) {
-      throw new IndexOutOfBoundsException("Requested PDP channel number is out of range.");
+    if (!PDPJNI.checkPDPChannel(channel)) {
+      StringBuilder buf = new StringBuilder();
+      buf.append("Requested PDP channel is out of range. Minimum: 0, Maximum: ")
+        .append(kPDPChannels)
+        .append(", Requested: ")
+        .append(channel);
+      throw new IndexOutOfBoundsException(buf.toString());
     }
   }
 
   /**
-   * Verify that the PDP module number is within limits. module numbers are
-   * 0-based.
-   *$
+   * Verify that the PDP module number is within limits. module numbers are 0-based.
+   *
    * @param module The module number to check.
    */
   protected static void checkPDPModule(final int module) {
-    if (module < 0 || module > kPDPModules) {
-      throw new IndexOutOfBoundsException("Requested PDP module number is out of range.");
+    if (!PDPJNI.checkPDPModule(module)) {
+      StringBuilder buf = new StringBuilder();
+      buf.append("Requested PDP module is out of range. Minimum: 0, Maximum: ")
+        .append(kPDPModules)
+        .append(", Requested: ")
+        .append(module);
+      throw new IndexOutOfBoundsException(buf.toString());
     }
   }
 
@@ -187,7 +241,8 @@ public abstract class SensorBase { // TODO: Refactor
   }
 
   /**
-   * Free the resources used by this object
+   * Free the resources used by this object.
    */
-  public void free() {}
+  public void free() {
+  }
 }

@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2015-2016. All Rights Reserved.                        */
+/* Copyright (c) FIRST 2015-2017. All Rights Reserved.                        */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
@@ -7,28 +7,25 @@
 
 package edu.wpi.first.wpilibj;
 
-import java.nio.ByteOrder;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
-import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary.tInstances;
-import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary.tResourceType;
-import edu.wpi.first.wpilibj.communication.UsageReporting;
+import edu.wpi.first.wpilibj.hal.FRCNetComm.tResourceType;
+import edu.wpi.first.wpilibj.hal.HAL;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.livewindow.LiveWindowSendable;
-import edu.wpi.first.wpilibj.tables.ITable;
 
 /**
- * Use a rate gyro to return the robots heading relative to a starting position.
- * The Gyro class tracks the robots heading based on the starting position. As
- * the robot rotates the new heading is computed by integrating the rate of
- * rotation returned by the sensor. When the class is instantiated, it does a
- * short calibration routine where it samples the gyro while at rest to
- * determine the default offset. This is subtracted from each sample to
- * determine the heading.
+ * Use a rate gyro to return the robots heading relative to a starting position. The Gyro class
+ * tracks the robots heading based on the starting position. As the robot rotates the new heading is
+ * computed by integrating the rate of rotation returned by the sensor. When the class is
+ * instantiated, it does a short calibration routine where it samples the gyro while at rest to
+ * determine the default offset. This is subtracted from each sample to determine the heading.
  *
- * This class is for the digital ADXRS450 gyro sensor that connects via SPI.
+ * <p>This class is for the digital ADXRS450 gyro sensor that connects via SPI.
  */
+@SuppressWarnings({"TypeName", "AbbreviationAsWordInName", "PMD.UnusedPrivateField"})
 public class ADXRS450_Gyro extends GyroBase implements Gyro, PIDSource, LiveWindowSendable {
   private static final double kSamplePeriod = 0.001;
   private static final double kCalibrationSampleTime = 5.0;
@@ -70,25 +67,25 @@ public class ADXRS450_Gyro extends GyroBase implements Gyro, PIDSource, LiveWind
     if ((readRegister(kPIDRegister) & 0xff00) != 0x5200) {
       m_spi.free();
       m_spi = null;
-      DriverStation.reportError("could not find ADXRS450 gyro on SPI port " + port.getValue(), false);
+      DriverStation.reportError("could not find ADXRS450 gyro on SPI port " + port.value,
+          false);
       return;
     }
 
-    m_spi.initAccumulator(kSamplePeriod, 0x20000000, 4, 0x0c000000, 0x04000000,
-        10, 16, true, true);
+    m_spi.initAccumulator(kSamplePeriod, 0x20000000, 4, 0x0c00000e, 0x04000000, 10, 16,
+        true, true);
 
     calibrate();
 
-    UsageReporting.report(tResourceType.kResourceType_ADXRS450, port.getValue());
-    LiveWindow.addSensor("ADXRS450_Gyro", port.getValue(), this);
+    HAL.report(tResourceType.kResourceType_ADXRS450, port.value);
+    LiveWindow.addSensor("ADXRS450_Gyro", port.value, this);
   }
 
-  /**
-   * {@inheritDoc}
-   */
   @Override
   public void calibrate() {
-    if (m_spi == null) return;
+    if (m_spi == null) {
+      return;
+    }
 
     Timer.delay(0.1);
 
@@ -97,15 +94,15 @@ public class ADXRS450_Gyro extends GyroBase implements Gyro, PIDSource, LiveWind
 
     Timer.delay(kCalibrationSampleTime);
 
-    m_spi.setAccumulatorCenter((int)m_spi.getAccumulatorAverage());
+    m_spi.setAccumulatorCenter((int) m_spi.getAccumulatorAverage());
     m_spi.resetAccumulator();
   }
 
-  private boolean calcParity(int v) {
+  private boolean calcParity(int value) {
     boolean parity = false;
-    while (v != 0) {
+    while (value != 0) {
       parity = !parity;
-      v = v & (v - 1);
+      value = value & (value - 1);
     }
     return parity;
   }
@@ -130,9 +127,7 @@ public class ADXRS450_Gyro extends GyroBase implements Gyro, PIDSource, LiveWind
     return (buf.getInt(0) >> 5) & 0xffff;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  @Override
   public void reset() {
     m_spi.resetAccumulator();
   }
@@ -148,19 +143,19 @@ public class ADXRS450_Gyro extends GyroBase implements Gyro, PIDSource, LiveWind
     }
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  @Override
   public double getAngle() {
-    if (m_spi == null) return 0.0;
+    if (m_spi == null) {
+      return 0.0;
+    }
     return m_spi.getAccumulatorValue() * kDegreePerSecondPerLSB * kSamplePeriod;
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  @Override
   public double getRate() {
-    if (m_spi == null) return 0.0;
+    if (m_spi == null) {
+      return 0.0;
+    }
     return m_spi.getAccumulatorLastValue() * kDegreePerSecondPerLSB;
   }
 }

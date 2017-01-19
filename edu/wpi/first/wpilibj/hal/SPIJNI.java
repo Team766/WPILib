@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2016. All Rights Reserved.                             */
+/* Copyright (c) FIRST 2016-2017. All Rights Reserved.                        */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
@@ -8,14 +8,14 @@
 package edu.wpi.first.wpilibj.hal;
 
 import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 import java.nio.LongBuffer;
 
+@SuppressWarnings("AbbreviationAsWordInName")
 public class SPIJNI extends JNIWrapper {
   public static native void spiInitialize(byte port);
 
   public static native int spiTransaction(byte port, ByteBuffer dataToSend,
-      ByteBuffer dataReceived, byte size);
+                                          ByteBuffer dataReceived, byte size);
 
   public static native int spiWrite(byte port, ByteBuffer dataToSend, byte sendSize);
 
@@ -25,16 +25,16 @@ public class SPIJNI extends JNIWrapper {
 
   public static native void spiSetSpeed(byte port, int speed);
 
-  public static native void spiSetOpts(byte port, int msb_first, int sample_on_trailing,
-      int clk_idle_high);
+  public static native void spiSetOpts(byte port, int msbFirst, int sampleOnTrailing,
+                                       int clkIdleHigh);
 
   public static native void spiSetChipSelectActiveHigh(byte port);
 
   public static native void spiSetChipSelectActiveLow(byte port);
 
-  public static native void spiInitAccumulator(byte port, int period, int cmd,
-      byte xferSize, int validMask, int validValue, byte dataShift,
-      byte dataSize, boolean isSigned, boolean bigEndian);
+  public static native void spiInitAccumulator(byte port, int period, int cmd, byte xferSize,
+                                               int validMask, int validValue, byte dataShift,
+                                               byte dataSize, boolean isSigned, boolean bigEndian);
 
   public static native void spiFreeAccumulator(byte port);
 
@@ -53,5 +53,5 @@ public class SPIJNI extends JNIWrapper {
   public static native double spiGetAccumulatorAverage(byte port);
 
   public static native void spiGetAccumulatorOutput(byte port, LongBuffer value,
-      IntBuffer count);
+                                                    LongBuffer count);
 }

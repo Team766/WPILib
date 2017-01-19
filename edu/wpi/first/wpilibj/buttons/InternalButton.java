@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008-2016. All Rights Reserved.                        */
+/* Copyright (c) FIRST 2008-2017. All Rights Reserved.                        */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
@@ -8,16 +8,13 @@
 package edu.wpi.first.wpilibj.buttons;
 
 /**
- * This class is intended to be used within a program. The programmer can
- * manually set its value. Also includes a setting for whether or not it should
- * invert its value.
- *
- * @author Joe
+ * This class is intended to be used within a program. The programmer can manually set its value.
+ * Also includes a setting for whether or not it should invert its value.
  */
 public class InternalButton extends Button {
 
-  boolean pressed;
-  boolean inverted;
+  private boolean m_pressed;
+  private boolean m_inverted;
 
   /**
    * Creates an InternalButton that is not inverted.
@@ -29,22 +26,22 @@ public class InternalButton extends Button {
   /**
    * Creates an InternalButton which is inverted depending on the input.
    *
-   * @param inverted if false, then this button is pressed when set to true,
-   *        otherwise it is pressed when set to false.
+   * @param inverted if false, then this button is pressed when set to true, otherwise it is pressed
+   *                 when set to false.
    */
   public InternalButton(boolean inverted) {
-    this.pressed = this.inverted = inverted;
+    m_pressed = m_inverted = inverted;
   }
 
   public void setInverted(boolean inverted) {
-    this.inverted = inverted;
+    m_inverted = inverted;
   }
 
   public void setPressed(boolean pressed) {
-    this.pressed = pressed;
+    m_pressed = pressed;
   }
 
   public boolean get() {
-    return pressed ^ inverted;
+    return m_pressed ^ m_inverted;
   }
 }
