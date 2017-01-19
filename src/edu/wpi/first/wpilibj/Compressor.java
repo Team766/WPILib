@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2016. All Rights Reserved.                             */
+/* Copyright (c) FIRST 2016-2017. All Rights Reserved.                        */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
@@ -7,187 +7,189 @@
 
 package edu.wpi.first.wpilibj;
 
-import edu.wpi.first.wpilibj.SensorBase;
 import edu.wpi.first.wpilibj.hal.CompressorJNI;
 import edu.wpi.first.wpilibj.livewindow.LiveWindowSendable;
 import edu.wpi.first.wpilibj.tables.ITable;
 
 /**
- * Class for operating the PCM (Pneumatics compressor module) The PCM
- * automatically will run in close-loop mode by default whenever a Solenoid
- * object is created. For most cases the Compressor object does not need to be
- * instantiated or used in a robot program.
- *$
- * This class is only required in cases where more detailed status or to
- * enable/disable closed loop control. Note: you cannot operate the compressor
- * directly from this class as doing so would circumvent the safety provided in
- * using the pressure switch and closed loop control. You can only turn off
+ * Class for operating a compressor connected to a PCM (Pneumatic Control Module). The PCM will
+ * automatically run in closed loop mode by default whenever a {@link Solenoid} object is created.
+ * For most cases, a Compressor object does not need to be instantiated or used in a robot program.
+ * This class is only required in cases where the robot program needs a more detailed status of the
+ * compressor or to enable/disable closed loop control.
+ *
+ * <p>Note: you cannot operate the compressor directly from this class as doing so would circumvent
+ * the safety provided by using the pressure switch and closed loop control. You can only turn off
  * closed loop control, thereby stopping the compressor from operating.
  */
 public class Compressor extends SensorBase implements LiveWindowSendable {
-  private long m_pcm;
+  private int m_compressorHandle;
+  private byte m_module;
 
   /**
-   * Create an instance of the Compressor
-   *$
-   * @param pcmId The PCM CAN device ID. Most robots that use PCM will have a
-   *        single module. Use this for supporting a second module other than
-   *        the default.
+   * Makes a new instance of the compressor using the provided CAN device ID.  Use this constructor
+   * when you have more than one PCM.
+   *
+   * @param module The PCM CAN device ID (0 - 62 inclusive)
    */
-  public Compressor(int pcmId) {
-    initCompressor(pcmId);
+  public Compressor(int module) {
+    m_table = null;
+    m_module = (byte) module;
+
+    m_compressorHandle = CompressorJNI.initializeCompressor((byte) module);
   }
 
   /**
-   * Create an instance of the Compressor Makes a new instance of the compressor
-   * using the default PCM ID (0). Additional modules can be supported by making
-   * a new instance and specifying the CAN ID
+   * Makes a new instance of the compressor using the default PCM ID of 0.
+   *
+   * <p>Additional modules can be supported by making a new instance and {@link #Compressor(int)
+   * specifying the CAN ID.}
    */
   public Compressor() {
-    initCompressor(getDefaultSolenoidModule());
-  }
-
-  private void initCompressor(int module) {
-    m_table = null;
-
-    m_pcm = CompressorJNI.initializeCompressor((byte) module);
+    this(getDefaultSolenoidModule());
   }
 
   /**
-   * Start the compressor running in closed loop control mode Use the method in
-   * cases where you would like to manually stop and start the compressor for
-   * applications such as conserving battery or making sure that the compressor
-   * motor doesn't start during critical operations.
+   * Start the compressor running in closed loop control mode.
+   *
+   * <p>Use the method in cases where you would like to manually stop and start the compressor for
+   * applications such as conserving battery or making sure that the compressor motor doesn't start
+   * during critical operations.
    */
   public void start() {
     setClosedLoopControl(true);
   }
 
   /**
-   * Stop the compressor from running in closed loop control mode. Use the
-   * method in cases where you would like to manually stop and start the
-   * compressor for applications such as conserving battery or making sure that
-   * the compressor motor doesn't start during critical operations.
+   * Stop the compressor from running in closed loop control mode.
+   *
+   * <p>Use the method in cases where you would like to manually stop and start the compressor for
+   * applications such as conserving battery or making sure that the compressor motor doesn't start
+   * during critical operations.
    */
   public void stop() {
     setClosedLoopControl(false);
   }
 
   /**
-   * Get the enabled status of the compressor
-   *$
+   * Get the status of the compressor.
+   *
    * @return true if the compressor is on
    */
   public boolean enabled() {
-    return CompressorJNI.getCompressor(m_pcm);
+    return CompressorJNI.getCompressor(m_compressorHandle);
   }
 
   /**
-   * Get the current pressure switch value
-   *$
-   * @return true if the pressure is low by reading the pressure switch that is
-   *         plugged into the PCM
+   * Get the pressure switch value.
+   *
+   * @return true if the pressure is low
    */
   public boolean getPressureSwitchValue() {
-    return CompressorJNI.getPressureSwitch(m_pcm);
+    return CompressorJNI.getCompressorPressureSwitch(m_compressorHandle);
   }
 
   /**
-   * Get the current being used by the compressor
-   *$
-   * @return current consumed in amps for the compressor motor
+   * Get the current being used by the compressor.
+   *
+   * @return current consumed by the compressor in amps
    */
-  public float getCompressorCurrent() {
-    return CompressorJNI.getCompressorCurrent(m_pcm);
+  public double getCompressorCurrent() {
+    return CompressorJNI.getCompressorCurrent(m_compressorHandle);
   }
 
   /**
-   * Set the PCM in closed loop control mode
-   *$
-   * @param on If true sets the compressor to be in closed loop control mode
-   *        otherwise normal operation of the compressor is disabled.
+   * Set the PCM in closed loop control mode.
+   *
+   * @param on if true sets the compressor to be in closed loop control mode (default)
    */
   public void setClosedLoopControl(boolean on) {
-    CompressorJNI.setClosedLoopControl(m_pcm, on);
+    CompressorJNI.setCompressorClosedLoopControl(m_compressorHandle, on);
   }
 
   /**
-   * Gets the current operating mode of the PCM
-   *$
-   * @return true if compressor is operating on closed-loop mode, otherwise
-   *         return false.
+   * Gets the current operating mode of the PCM.
+   *
+   * @return true if compressor is operating on closed-loop mode
    */
   public boolean getClosedLoopControl() {
-    return CompressorJNI.getClosedLoopControl(m_pcm);
+    return CompressorJNI.getCompressorClosedLoopControl(m_compressorHandle);
   }
 
   /**
-   * @return true if PCM is in fault state : Compressor Drive is disabled due to
-   *         compressor current being too high.
+   * If PCM is in fault state : Compressor Drive is disabled due to compressor current being too
+   * high.
+   *
+   * @return true if PCM is in fault state.
    */
   public boolean getCompressorCurrentTooHighFault() {
-    return CompressorJNI.getCompressorCurrentTooHighFault(m_pcm);
+    return CompressorJNI.getCompressorCurrentTooHighFault(m_compressorHandle);
   }
 
   /**
-   * @return true if PCM sticky fault is set : Compressor Drive is disabled due
-   *         to compressor current being too high.
+   * If PCM sticky fault is set : Compressor is disabled due to compressor current being too
+   * high.
+   *
+   * @return true if PCM sticky fault is set.
    */
   public boolean getCompressorCurrentTooHighStickyFault() {
-    return CompressorJNI.getCompressorCurrentTooHighStickyFault(m_pcm);
+    return CompressorJNI.getCompressorCurrentTooHighStickyFault(m_compressorHandle);
   }
 
   /**
-   * @return true if PCM sticky fault is set : Compressor output appears to be
-   *         shorted.
+   * @return true if PCM sticky fault is set : Compressor output appears to be shorted.
    */
   public boolean getCompressorShortedStickyFault() {
-    return CompressorJNI.getCompressorShortedStickyFault(m_pcm);
+    return CompressorJNI.getCompressorShortedStickyFault(m_compressorHandle);
   }
 
   /**
-   * @return true if PCM is in fault state : Compressor output appears to be
-   *         shorted.
+   * @return true if PCM is in fault state : Compressor output appears to be shorted.
    */
   public boolean getCompressorShortedFault() {
-    return CompressorJNI.getCompressorShortedFault(m_pcm);
+    return CompressorJNI.getCompressorShortedFault(m_compressorHandle);
   }
 
   /**
-   * @return true if PCM sticky fault is set : Compressor does not appear to be
-   *         wired, i.e. compressor is not drawing enough current.
+   * If PCM sticky fault is set : Compressor does not appear to be wired, i.e. compressor is not
+   * drawing enough current.
+   *
+   * @return true if PCM sticky fault is set.
    */
   public boolean getCompressorNotConnectedStickyFault() {
-    return CompressorJNI.getCompressorNotConnectedStickyFault(m_pcm);
+    return CompressorJNI.getCompressorNotConnectedStickyFault(m_compressorHandle);
   }
 
   /**
-   * @return true if PCM is in fault state : Compressor does not appear to be
-   *         wired, i.e. compressor is not drawing enough current.
+   * If PCM is in fault state : Compressor does not appear to be wired, i.e. compressor is not
+   * drawing enough current.
+   *
+   * @return true if PCM is in fault state.
    */
   public boolean getCompressorNotConnectedFault() {
-    return CompressorJNI.getCompressorNotConnectedFault(m_pcm);
+    return CompressorJNI.getCompressorNotConnectedFault(m_compressorHandle);
   }
 
   /**
    * Clear ALL sticky faults inside PCM that Compressor is wired to.
    *
-   * If a sticky fault is set, then it will be persistently cleared. Compressor
-   * drive maybe momentarily disable while flags are being cleared. Care should
-   * be taken to not call this too frequently, otherwise normal compressor
-   * functionality may be prevented.
+   * <p>If a sticky fault is set, then it will be persistently cleared. The compressor might
+   * momentarily disable while the flags are being cleared. Doo not call this method too
+   * frequently, otherwise normal compressor functionality may be prevented.
    *
-   * If no sticky faults are set then this call will have no effect.
+   * <p>If no sticky faults are set then this call will have no effect.
    */
   public void clearAllPCMStickyFaults() {
-    CompressorJNI.clearAllPCMStickyFaults(m_pcm);
+    CompressorJNI.clearAllPCMStickyFaults(m_module);
   }
 
   @Override
-  public void startLiveWindowMode() {}
+  public void startLiveWindowMode() {
+  }
 
   @Override
-  public void stopLiveWindowMode() {}
+  public void stopLiveWindowMode() {
+  }
 
   @Override
   public String getSmartDashboardType() {

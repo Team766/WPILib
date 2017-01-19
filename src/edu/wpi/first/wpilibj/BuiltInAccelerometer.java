@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2014-2016. All Rights Reserved.                        */
+/* Copyright (c) FIRST 2014-2017. All Rights Reserved.                        */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
@@ -7,10 +7,10 @@
 
 package edu.wpi.first.wpilibj;
 
-import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj.hal.AccelerometerJNI;
-import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary.tResourceType;
-import edu.wpi.first.wpilibj.communication.UsageReporting;
+import edu.wpi.first.wpilibj.hal.FRCNetComm.tResourceType;
+import edu.wpi.first.wpilibj.hal.HAL;
+import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.livewindow.LiveWindowSendable;
 import edu.wpi.first.wpilibj.tables.ITable;
@@ -18,18 +18,17 @@ import edu.wpi.first.wpilibj.tables.ITable;
 /**
  * Built-in accelerometer.
  *
- * This class allows access to the RoboRIO's internal accelerometer.
+ * <p>This class allows access to the roboRIO's internal accelerometer.
  */
 public class BuiltInAccelerometer implements Accelerometer, LiveWindowSendable {
   /**
    * Constructor.
-   *$
+   *
    * @param range The range the accelerometer will measure
    */
   public BuiltInAccelerometer(Range range) {
     setRange(range);
-    UsageReporting
-        .report(tResourceType.kResourceType_Accelerometer, 0, 0, "Built-in accelerometer");
+    HAL.report(tResourceType.kResourceType_Accelerometer, 0, 0, "Built-in accelerometer");
     LiveWindow.addSensor("BuiltInAccel", 0, this);
   }
 
@@ -40,7 +39,6 @@ public class BuiltInAccelerometer implements Accelerometer, LiveWindowSendable {
     this(Range.k8G);
   }
 
-  /** {inheritdoc} */
   @Override
   public void setRange(Range range) {
     AccelerometerJNI.setAccelerometerActive(false);
@@ -56,14 +54,18 @@ public class BuiltInAccelerometer implements Accelerometer, LiveWindowSendable {
         AccelerometerJNI.setAccelerometerRange(2);
         break;
       case k16G:
-        throw new RuntimeException("16G range not supported (use k2G, k4G, or k8G)");
+      default:
+        throw new IllegalArgumentException(range + " range not supported (use k2G, k4G, or k8G)");
+
     }
 
     AccelerometerJNI.setAccelerometerActive(true);
   }
 
   /**
-   * @return The acceleration of the RoboRIO along the X axis in g-forces
+   * The acceleration in the X axis.
+   *
+   * @return The acceleration of the roboRIO along the X axis in g-forces
    */
   @Override
   public double getX() {
@@ -71,7 +73,9 @@ public class BuiltInAccelerometer implements Accelerometer, LiveWindowSendable {
   }
 
   /**
-   * @return The acceleration of the RoboRIO along the Y axis in g-forces
+   * The acceleration in the Y axis.
+   *
+   * @return The acceleration of the roboRIO along the Y axis in g-forces
    */
   @Override
   public double getY() {
@@ -79,26 +83,29 @@ public class BuiltInAccelerometer implements Accelerometer, LiveWindowSendable {
   }
 
   /**
-   * @return The acceleration of the RoboRIO along the Z axis in g-forces
+   * The acceleration in the Z axis.
+   *
+   * @return The acceleration of the roboRIO along the Z axis in g-forces
    */
   @Override
   public double getZ() {
     return AccelerometerJNI.getAccelerometerZ();
   }
 
+  @Override
   public String getSmartDashboardType() {
     return "3AxisAccelerometer";
   }
 
   private ITable m_table;
 
-  /** {@inheritDoc} */
+  @Override
   public void initTable(ITable subtable) {
     m_table = subtable;
     updateTable();
   }
 
-  /** {@inheritDoc} */
+  @Override
   public void updateTable() {
     if (m_table != null) {
       m_table.putNumber("X", getX());
@@ -107,12 +114,16 @@ public class BuiltInAccelerometer implements Accelerometer, LiveWindowSendable {
     }
   }
 
-  /** {@inheritDoc} */
+  @Override
   public ITable getTable() {
     return m_table;
   }
 
-  public void startLiveWindowMode() {}
+  @Override
+  public void startLiveWindowMode() {
+  }
 
-  public void stopLiveWindowMode() {}
-};
+  @Override
+  public void stopLiveWindowMode() {
+  }
+}

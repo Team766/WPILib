@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008-2016. All Rights Reserved.                        */
+/* Copyright (c) FIRST 2008-2017. All Rights Reserved.                        */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
@@ -9,27 +9,19 @@ package edu.wpi.first.wpilibj;
 
 import edu.wpi.first.wpilibj.hal.InterruptJNI;
 import edu.wpi.first.wpilibj.util.AllocationException;
-import edu.wpi.first.wpilibj.util.CheckedAllocationException;
+
 
 /**
- * Base for sensors to be used with interrupts
+ * Base for sensors to be used with interrupts.
  */
 public abstract class InterruptableSensorBase extends SensorBase {
 
-  public static enum WaitResult {
+  @SuppressWarnings("JavadocMethod")
+  public enum WaitResult {
     kTimeout(0x0), kRisingEdge(0x1), kFallingEdge(0x100), kBoth(0x101);
 
+    @SuppressWarnings("MemberName")
     public final int value;
-
-    public static WaitResult valueOf(int value) {
-      for (WaitResult mode : values()) {
-        if (mode.value == value) {
-          return mode;
-        }
-      }
-      return null;
-    }
-
 
     private WaitResult(int value) {
       this.value = value;
@@ -37,55 +29,44 @@ public abstract class InterruptableSensorBase extends SensorBase {
   }
 
   /**
-   * The interrupt resource
+   * The interrupt resource.
    */
-  protected long m_interrupt = 0;
+  protected int m_interrupt = InterruptJNI.HalInvalidHandle;
 
   /**
-   * Flags if the interrupt being allocated is synchronous
+   * Flags if the interrupt being allocated is synchronous.
    */
   protected boolean m_isSynchronousInterrupt = false;
 
   /**
-   * The index of the interrupt
-   */
-  protected int m_interruptIndex;
-  /**
-   * Resource manager
-   */
-  protected static Resource interrupts = new Resource(8);
-
-  /**
-   * Create a new InterrupatableSensorBase
+   * Create a new InterrupatableSensorBase.
    */
   public InterruptableSensorBase() {
     m_interrupt = 0;
   }
 
   /**
-   * @return true if this is an analog trigger
+   * If this is an analog trigger.
+   *
+   * @return true if this is an analog trigger.
    */
-  abstract boolean getAnalogTriggerForRouting();
+  public abstract int getAnalogTriggerTypeForRouting();
 
   /**
+   * The channel routing number.
+   *
    * @return channel routing number
    */
-  abstract int getChannelForRouting();
-
-  /**
-   * @return module routing number
-   */
-  abstract byte getModuleForRouting();
+  public abstract int getPortHandleForRouting();
 
   /**
    * Request one of the 8 interrupts asynchronously on this digital input.
    *
-   * @param handler The {@link InterruptHandlerFunction} that contains the
-   *        method {@link InterruptHandlerFunction#interruptFired(int, Object)}
-   *        that will be called whenever there is an interrupt on this device.
-   *        Request interrupts in synchronous mode where the user program
-   *        interrupt handler will be called when an interrupt occurs. The
-   *        default is interrupt on rising edges only.
+   * @param handler The {@link InterruptHandlerFunction} that contains the method {@link
+   *                InterruptHandlerFunction#interruptFired(int, Object)} that will be called
+   *                whenever there is an interrupt on this device. Request interrupts in synchronous
+   *                mode where the user program interrupt handler will be called when an interrupt
+   *                occurs. The default is interrupt on rising edges only.
    */
   public void requestInterrupts(InterruptHandlerFunction<?> handler) {
     if (m_interrupt != 0) {
@@ -94,20 +75,19 @@ public abstract class InterruptableSensorBase extends SensorBase {
 
     allocateInterrupts(false);
 
-    assert (m_interrupt != 0);
+    assert m_interrupt != 0;
 
-    InterruptJNI.requestInterrupts(m_interrupt, getModuleForRouting(), getChannelForRouting(),
-        getAnalogTriggerForRouting());
+    InterruptJNI.requestInterrupts(m_interrupt, getPortHandleForRouting(),
+                                   getAnalogTriggerTypeForRouting());
     setUpSourceEdge(true, false);
-    InterruptJNI.attachInterruptHandler(m_interrupt, handler.function,
+    InterruptJNI.attachInterruptHandler(m_interrupt, handler.m_function,
         handler.overridableParameter());
   }
 
   /**
-   * Request one of the 8 interrupts synchronously on this digital input.
-   * Request interrupts in synchronous mode where the user program will have to
-   * explicitly wait for the interrupt to occur using {@link #waitForInterrupt}.
-   * The default is interrupt on rising edges only.
+   * Request one of the 8 interrupts synchronously on this digital input. Request interrupts in
+   * synchronous mode where the user program will have to explicitly wait for the interrupt to occur
+   * using {@link #waitForInterrupt}. The default is interrupt on rising edges only.
    */
   public void requestInterrupts() {
     if (m_interrupt != 0) {
@@ -116,10 +96,10 @@ public abstract class InterruptableSensorBase extends SensorBase {
 
     allocateInterrupts(true);
 
-    assert (m_interrupt != 0);
+    assert m_interrupt != 0;
 
-    InterruptJNI.requestInterrupts(m_interrupt, getModuleForRouting(), getChannelForRouting(),
-        getAnalogTriggerForRouting());
+    InterruptJNI.requestInterrupts(m_interrupt, getPortHandleForRouting(),
+                                   getAnalogTriggerTypeForRouting());
     setUpSourceEdge(true, false);
 
   }
@@ -127,25 +107,18 @@ public abstract class InterruptableSensorBase extends SensorBase {
   /**
    * Allocate the interrupt
    *
-   * @param watcher true if the interrupt should be in synchronous mode where
-   *        the user program will have to explicitly wait for the interrupt to
-   *        occur.
+   * @param watcher true if the interrupt should be in synchronous mode where the user program will
+   *                have to explicitly wait for the interrupt to occur.
    */
   protected void allocateInterrupts(boolean watcher) {
-    try {
-      m_interruptIndex = interrupts.allocate();
-    } catch (CheckedAllocationException e) {
-      throw new AllocationException("No interrupts are left to be allocated");
-    }
     m_isSynchronousInterrupt = watcher;
 
-    m_interrupt =
-        InterruptJNI.initializeInterrupts(m_interruptIndex, watcher);
+    m_interrupt = InterruptJNI.initializeInterrupts(watcher);
   }
 
   /**
-   * Cancel interrupts on this device. This deallocates all the chipobject
-   * structures and disables any interrupts.
+   * Cancel interrupts on this device. This deallocates all the chipobject structures and disables
+   * any interrupts.
    */
   public void cancelInterrupts() {
     if (m_interrupt == 0) {
@@ -153,15 +126,14 @@ public abstract class InterruptableSensorBase extends SensorBase {
     }
     InterruptJNI.cleanInterrupts(m_interrupt);
     m_interrupt = 0;
-    interrupts.free(m_interruptIndex);
   }
 
   /**
    * In synchronous mode, wait for the defined interrupt to occur.
    *
-   * @param timeout Timeout in seconds
-   * @param ignorePrevious If true, ignore interrupts that happened before
-   *        waitForInterrupt was called.
+   * @param timeout        Timeout in seconds
+   * @param ignorePrevious If true, ignore interrupts that happened before waitForInterrupt was
+   *                       called.
    * @return Result of the wait.
    */
   public WaitResult waitForInterrupt(double timeout, boolean ignorePrevious) {
@@ -170,7 +142,12 @@ public abstract class InterruptableSensorBase extends SensorBase {
     }
     int result = InterruptJNI.waitForInterrupt(m_interrupt, timeout, ignorePrevious);
 
-    return WaitResult.valueOf(result);
+    for (WaitResult mode : WaitResult.values()) {
+      if (mode.value == result) {
+        return mode;
+      }
+    }
+    return null;
   }
 
   /**
@@ -184,9 +161,9 @@ public abstract class InterruptableSensorBase extends SensorBase {
   }
 
   /**
-   * Enable interrupts to occur on this input. Interrupts are disabled when the
-   * RequestInterrupt call is made. This gives time to do the setup of the other
-   * options before starting to field interrupts.
+   * Enable interrupts to occur on this input. Interrupts are disabled when the RequestInterrupt
+   * call is made. This gives time to do the setup of the other options before starting to field
+   * interrupts.
    */
   public void enableInterrupts() {
     if (m_interrupt == 0) {
@@ -212,37 +189,37 @@ public abstract class InterruptableSensorBase extends SensorBase {
   }
 
   /**
-   * Return the timestamp for the rising interrupt that occurred most recently.
-   * This is in the same time domain as getClock(). The rising-edge interrupt
-   * should be enabled with {@link #setUpSourceEdge}
-   *$
+   * Return the timestamp for the rising interrupt that occurred most recently. This is in the same
+   * time domain as getClock(). The rising-edge interrupt should be enabled with {@link
+   * #setUpSourceEdge}.
+   *
    * @return Timestamp in seconds since boot.
    */
   public double readRisingTimestamp() {
     if (m_interrupt == 0) {
       throw new IllegalStateException("The interrupt is not allocated.");
     }
-    return InterruptJNI.readRisingTimestamp(m_interrupt);
+    return InterruptJNI.readInterruptRisingTimestamp(m_interrupt);
   }
 
   /**
-   * Return the timestamp for the falling interrupt that occurred most recently.
-   * This is in the same time domain as getClock(). The falling-edge interrupt
-   * should be enabled with {@link #setUpSourceEdge}
-   *$
+   * Return the timestamp for the falling interrupt that occurred most recently. This is in the same
+   * time domain as getClock(). The falling-edge interrupt should be enabled with {@link
+   * #setUpSourceEdge}.
+   *
    * @return Timestamp in seconds since boot.
    */
   public double readFallingTimestamp() {
     if (m_interrupt == 0) {
       throw new IllegalStateException("The interrupt is not allocated.");
     }
-    return InterruptJNI.readFallingTimestamp(m_interrupt);
+    return InterruptJNI.readInterruptFallingTimestamp(m_interrupt);
   }
 
   /**
-   * Set which edge to trigger interrupts on
+   * Set which edge to trigger interrupts on.
    *
-   * @param risingEdge true to interrupt on rising edge
+   * @param risingEdge  true to interrupt on rising edge
    * @param fallingEdge true to interrupt on falling edge
    */
   public void setUpSourceEdge(boolean risingEdge, boolean fallingEdge) {

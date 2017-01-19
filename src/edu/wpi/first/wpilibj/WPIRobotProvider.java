@@ -7,8 +7,6 @@ import interfaces.JoystickReader;
 import interfaces.RobotProvider;
 import interfaces.SolenoidController;
 import interfaces.SpeedController;
-import edu.wpi.first.wpilibj.vision.AxisCamera;
-import edu.wpi.first.wpilibj.vision.USBCamera;
 
 public class WPIRobotProvider extends RobotProvider{
 
@@ -49,9 +47,8 @@ public class WPIRobotProvider extends RobotProvider{
 	
 	@Override
 	public CameraReader getCamera(String id, String value) {
-		if(id.equals("axisCamera"))
-			return new AxisCamera(value);
-		return new USBCamera(value);
+		System.err.println("Camera support not yet avaible");
+		return null;
 	}
 
 	@Override

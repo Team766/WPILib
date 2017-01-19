@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008-2016. All Rights Reserved.                        */
+/* Copyright (c) FIRST 2008-2017. All Rights Reserved.                        */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
@@ -7,12 +7,11 @@
 
 package edu.wpi.first.wpilibj;
 
-import java.nio.ByteOrder;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
-import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary.tInstances;
-import edu.wpi.first.wpilibj.communication.FRCNetworkCommunicationsLibrary.tResourceType;
-import edu.wpi.first.wpilibj.communication.UsageReporting;
+import edu.wpi.first.wpilibj.hal.FRCNetComm.tResourceType;
+import edu.wpi.first.wpilibj.hal.HAL;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.livewindow.LiveWindowSendable;
@@ -21,8 +20,9 @@ import edu.wpi.first.wpilibj.tables.ITable;
 /**
  * ADXL362 SPI Accelerometer.
  *
- * This class allows access to an Analog Devices ADXL362 3-axis accelerometer.
+ * <p>This class allows access to an Analog Devices ADXL362 3-axis accelerometer.
  */
+@SuppressWarnings("PMD.UnusedPrivateField")
 public class ADXL362 extends SensorBase implements Accelerometer, LiveWindowSendable {
   private static final byte kRegWrite = 0x0A;
   private static final byte kRegRead = 0x0B;
@@ -41,14 +41,12 @@ public class ADXL362 extends SensorBase implements Accelerometer, LiveWindowSend
   private static final byte kPowerCtl_AutoSleep = 0x04;
   private static final byte kPowerCtl_Measure = 0x02;
 
-  public static enum Axes {
+  public enum Axes {
     kX((byte) 0x00),
     kY((byte) 0x02),
     kZ((byte) 0x04);
 
-    /**
-     * The integer value representing this enumeration
-     */
+    @SuppressWarnings("MemberName")
     public final byte value;
 
     private Axes(byte value) {
@@ -56,8 +54,8 @@ public class ADXL362 extends SensorBase implements Accelerometer, LiveWindowSend
     }
   }
 
+  @SuppressWarnings("MemberName")
   public static class AllAxes {
-
     public double XAxis;
     public double YAxis;
     public double ZAxis;
@@ -78,7 +76,7 @@ public class ADXL362 extends SensorBase implements Accelerometer, LiveWindowSend
   /**
    * Constructor.
    *
-   * @param port The SPI port that the accelerometer is connected to
+   * @param port  The SPI port that the accelerometer is connected to
    * @param range The range (+ or -) that the accelerometer will measure.
    */
   public ADXL362(SPI.Port port, Range range) {
@@ -94,10 +92,10 @@ public class ADXL362 extends SensorBase implements Accelerometer, LiveWindowSend
     transferBuffer.put(0, kRegRead);
     transferBuffer.put(1, kPartIdRegister);
     m_spi.transaction(transferBuffer, transferBuffer, 3);
-    if (transferBuffer.get(2) != (byte)0xF2) {
+    if (transferBuffer.get(2) != (byte) 0xF2) {
       m_spi.free();
       m_spi = null;
-      DriverStation.reportError("could not find ADXL362 on SPI port " + port.getValue(), false);
+      DriverStation.reportError("could not find ADXL362 on SPI port " + port.value, false);
       return;
     }
 
@@ -109,53 +107,54 @@ public class ADXL362 extends SensorBase implements Accelerometer, LiveWindowSend
     transferBuffer.put(2, (byte) (kPowerCtl_Measure | kPowerCtl_UltraLowNoise));
     m_spi.write(transferBuffer, 3);
 
-    UsageReporting.report(tResourceType.kResourceType_ADXL362, port.getValue());
-    LiveWindow.addSensor("ADXL362", port.getValue(), this);
+    HAL.report(tResourceType.kResourceType_ADXL362, port.value);
+    LiveWindow.addSensor("ADXL362", port.value, this);
   }
 
   public void free() {
     m_spi.free();
   }
 
-  /** {inheritdoc} */
   @Override
   public void setRange(Range range) {
-    byte value = 0;
+    final byte value;
 
     switch (range) {
       case k2G:
         value = kFilterCtl_Range2G;
-	m_gsPerLSB = 0.001;
+        m_gsPerLSB = 0.001;
         break;
       case k4G:
         value = kFilterCtl_Range4G;
-	m_gsPerLSB = 0.002;
+        m_gsPerLSB = 0.002;
         break;
       case k8G:
       case k16G:  // 16G not supported; treat as 8G
         value = kFilterCtl_Range8G;
-	m_gsPerLSB = 0.004;
+        m_gsPerLSB = 0.004;
         break;
+      default:
+        throw new IllegalArgumentException(range + " unsupported");
+
     }
 
     // Specify the data format to read
-    byte[] commands = new byte[] {kRegWrite, kFilterCtlRegister, (byte) (kFilterCtl_ODR_100Hz | value)};
+    byte[] commands = new byte[]{kRegWrite, kFilterCtlRegister, (byte) (kFilterCtl_ODR_100Hz
+        | value)};
     m_spi.write(commands, commands.length);
   }
 
-  /** {@inheritDoc} */
+
   @Override
   public double getX() {
     return getAcceleration(Axes.kX);
   }
 
-  /** {@inheritDoc} */
   @Override
   public double getY() {
     return getAcceleration(Axes.kY);
   }
 
-  /** {@inheritDoc} */
   @Override
   public double getZ() {
     return getAcceleration(Axes.kZ);
@@ -168,8 +167,9 @@ public class ADXL362 extends SensorBase implements Accelerometer, LiveWindowSend
    * @return Acceleration of the ADXL362 in Gs.
    */
   public double getAcceleration(ADXL362.Axes axis) {
-    if (m_spi == null)
+    if (m_spi == null) {
       return 0.0;
+    }
     ByteBuffer transferBuffer = ByteBuffer.allocateDirect(4);
     transferBuffer.put(0, kRegRead);
     transferBuffer.put(1, (byte) (kDataRegister + axis.value));
@@ -183,8 +183,7 @@ public class ADXL362 extends SensorBase implements Accelerometer, LiveWindowSend
   /**
    * Get the acceleration of all axes in Gs.
    *
-   * @return An object containing the acceleration measured on each axis of the
-   *         ADXL362 in Gs.
+   * @return An object containing the acceleration measured on each axis of the ADXL362 in Gs.
    */
   public ADXL362.AllAxes getAccelerations() {
     ADXL362.AllAxes data = new ADXL362.AllAxes();
@@ -204,19 +203,20 @@ public class ADXL362 extends SensorBase implements Accelerometer, LiveWindowSend
     return data;
   }
 
+  @Override
   public String getSmartDashboardType() {
     return "3AxisAccelerometer";
   }
 
   private ITable m_table;
 
-  /** {@inheritDoc} */
+  @Override
   public void initTable(ITable subtable) {
     m_table = subtable;
     updateTable();
   }
 
-  /** {@inheritDoc} */
+  @Override
   public void updateTable() {
     if (m_table != null) {
       m_table.putNumber("X", getX());
@@ -225,12 +225,16 @@ public class ADXL362 extends SensorBase implements Accelerometer, LiveWindowSend
     }
   }
 
-  /** {@inheritDoc} */
+  @Override
   public ITable getTable() {
     return m_table;
   }
 
-  public void startLiveWindowMode() {}
+  @Override
+  public void startLiveWindowMode() {
+  }
 
-  public void stopLiveWindowMode() {}
+  @Override
+  public void stopLiveWindowMode() {
+  }
 }

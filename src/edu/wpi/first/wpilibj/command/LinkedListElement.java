@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008-2016. All Rights Reserved.                        */
+/* Copyright (c) FIRST 2008-2017. All Rights Reserved.                        */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
@@ -8,58 +8,59 @@
 package edu.wpi.first.wpilibj.command;
 
 /**
- *
- * @author Greg
+ * An element that is in a LinkedList.
  */
 class LinkedListElement {
-  private LinkedListElement next;
-  private LinkedListElement previous;
-  private Command data;
+  private LinkedListElement m_next;
+  private LinkedListElement m_previous;
+  private Command m_data;
 
-  public LinkedListElement() {}
+  public LinkedListElement() {
+  }
 
   public void setData(Command newData) {
-    data = newData;
+    m_data = newData;
   }
 
   public Command getData() {
-    return data;
+    return m_data;
   }
 
   public LinkedListElement getNext() {
-    return next;
+    return m_next;
   }
 
   public LinkedListElement getPrevious() {
-    return previous;
+    return m_previous;
   }
 
-  public void add(LinkedListElement l) {
-    if (next == null) {
-      next = l;
-      next.previous = this;
+  public void add(LinkedListElement listElement) {
+    if (m_next == null) {
+      m_next = listElement;
+      m_next.m_previous = this;
     } else {
-      next.previous = l;
-      l.next = next;
-      l.previous = this;
-      next = l;
+      m_next.m_previous = listElement;
+      listElement.m_next = m_next;
+      listElement.m_previous = this;
+      m_next = listElement;
     }
   }
 
+  @SuppressWarnings("PMD.EmptyIfStmt")
   public LinkedListElement remove() {
-    if (previous == null && next == null) {
-
-    } else if (next == null) {
-      previous.next = null;
-    } else if (previous == null) {
-      next.previous = null;
+    if (m_previous == null && m_next == null) {
+      // no-op
+    } else if (m_next == null) {
+      m_previous.m_next = null;
+    } else if (m_previous == null) {
+      m_next.m_previous = null;
     } else {
-      next.previous = previous;
-      previous.next = next;
+      m_next.m_previous = m_previous;
+      m_previous.m_next = m_next;
     }
-    LinkedListElement n = next;
-    next = null;
-    previous = null;
-    return n;
+    LinkedListElement returnNext = m_next;
+    m_next = null;
+    m_previous = null;
+    return returnNext;
   }
 }

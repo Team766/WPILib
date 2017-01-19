@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2016. All Rights Reserved.                             */
+/* Copyright (c) FIRST 2016-2017. All Rights Reserved.                        */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
@@ -7,27 +7,29 @@
 
 package edu.wpi.first.wpilibj;
 
+@SuppressWarnings("SummaryJavadoc")
 public interface PIDInterface extends Controller {
 
-  public void setPID(double p, double i, double d);
+  @SuppressWarnings("ParameterName")
+  void setPID(double p, double i, double d);
 
-  public double getP();
+  double getP();
 
-  public double getI();
+  double getI();
 
-  public double getD();
+  double getD();
 
-  public void setSetpoint(double setpoint);
+  void setSetpoint(double setpoint);
 
-  public double getSetpoint();
+  double getSetpoint();
 
-  public double getError();
+  double getError();
 
-  public void enable();
+  void enable();
 
-  public void disable();
+  void disable();
 
-  public boolean isEnabled();
+  boolean isEnabled();
 
-  public void reset();
+  void reset();
 }

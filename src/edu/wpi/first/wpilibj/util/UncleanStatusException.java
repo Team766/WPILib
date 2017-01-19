@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2008-2016. All Rights Reserved.                        */
+/* Copyright (c) FIRST 2008-2017. All Rights Reserved.                        */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
@@ -8,28 +8,26 @@
 package edu.wpi.first.wpilibj.util;
 
 /**
- * Exception for bad status codes from the chip object
- *$
- * @author Brian
+ * Exception for bad status codes from the chip object.
  */
 public final class UncleanStatusException extends IllegalStateException {
 
-  private final int statusCode;
+  private final int m_statusCode;
 
   /**
-   * Create a new UncleanStatusException
-   *$
-   * @param status the status code that caused the exception
+   * Create a new UncleanStatusException.
+   *
+   * @param status  the status code that caused the exception
    * @param message A message describing the exception
    */
   public UncleanStatusException(int status, String message) {
     super(message);
-    statusCode = status;
+    m_statusCode = status;
   }
 
   /**
-   * Create a new UncleanStatusException
-   *$
+   * Create a new UncleanStatusException.
+   *
    * @param status the status code that caused the exception
    */
   public UncleanStatusException(int status) {
@@ -37,8 +35,8 @@ public final class UncleanStatusException extends IllegalStateException {
   }
 
   /**
-   * Create a new UncleanStatusException
-   *$
+   * Create a new UncleanStatusException.
+   *
    * @param message a message describing the exception
    */
   public UncleanStatusException(String message) {
@@ -46,18 +44,18 @@ public final class UncleanStatusException extends IllegalStateException {
   }
 
   /**
-   * Create a new UncleanStatusException
+   * Create a new UncleanStatusException.
    */
   public UncleanStatusException() {
     this(-1, "Status code was non-zero");
   }
 
   /**
-   * Create a new UncleanStatusException
-   *$
+   * Create a new UncleanStatusException.
+   *
    * @return the status code that caused the exception
    */
   public int getStatus() {
-    return statusCode;
+    return m_statusCode;
   }
 }

@@ -1,5 +1,5 @@
 /*----------------------------------------------------------------------------*/
-/* Copyright (c) FIRST 2016. All Rights Reserved.                             */
+/* Copyright (c) FIRST 2016-2017. All Rights Reserved.                        */
 /* Open Source Software - may be modified and shared by FRC teams. The code   */
 /* must be accompanied by the FIRST BSD license file in the root directory of */
 /* the project.                                                               */
@@ -7,35 +7,57 @@
 
 package edu.wpi.first.wpilibj.hal;
 
-import java.nio.IntBuffer;
-
 public class EncoderJNI extends JNIWrapper {
-  public static native long initializeEncoder(byte port_a_module, int port_a_pin,
-      boolean port_a_analog_trigger, byte port_b_module, int port_b_pin, boolean port_b_analog_trigger,
-      boolean reverseDirection, IntBuffer index);
 
-  public static native void freeEncoder(long encoder_pointer);
+  public static native int initializeEncoder(int digitalSourceHandleA, int analogTriggerTypeA,
+                                             int digitalSourceHandleB, int analogTriggerTypeB,
+                                             boolean reverseDirection, int encodingType);
 
-  public static native void resetEncoder(long encoder_pointer);
+  public static native void freeEncoder(int encoderHandle);
 
-  public static native int getEncoder(long encoder_pointer);
+  public static native int getEncoder(int encoderHandle);
 
-  public static native double getEncoderPeriod(long encoder_pointer);
+  public static native int getEncoderRaw(int encoderHandle);
 
-  public static native void setEncoderMaxPeriod(long encoder_pointer, double maxPeriod);
+  public static native int getEncodingScaleFactor(int encoderHandle);
 
-  public static native boolean getEncoderStopped(long encoder_pointer);
+  public static native void resetEncoder(int encoderHandle);
 
-  public static native boolean getEncoderDirection(long encoder_pointer);
+  public static native double getEncoderPeriod(int encoderHandle);
 
-  public static native void setEncoderReverseDirection(long encoder_pointer,
-      boolean reverseDirection);
+  public static native void setEncoderMaxPeriod(int encoderHandle, double maxPeriod);
 
-  public static native void setEncoderSamplesToAverage(long encoder_pointer,
-      int samplesToAverage);
+  public static native boolean getEncoderStopped(int encoderHandle);
 
-  public static native int getEncoderSamplesToAverage(long encoder_pointer);
+  public static native boolean getEncoderDirection(int encoderHandle);
 
-  public static native void setEncoderIndexSource(long digital_port, int pin,
-      boolean analogTrigger, boolean activeHigh, boolean edgeSensitive);
+  public static native double getEncoderDistance(int encoderHandle);
+
+  public static native double getEncoderRate(int encoderHandle);
+
+  public static native void setEncoderMinRate(int encoderHandle, double minRate);
+
+  public static native void setEncoderDistancePerPulse(int encoderHandle, double distancePerPulse);
+
+  public static native void setEncoderReverseDirection(int encoderHandle,
+                                                       boolean reverseDirection);
+
+  public static native void setEncoderSamplesToAverage(int encoderHandle,
+                                                       int samplesToAverage);
+
+  public static native int getEncoderSamplesToAverage(int encoderHandle);
+
+  public static native void setEncoderIndexSource(int encoderHandle, int digitalSourceHandle,
+                                                  int analogTriggerType, int indexingType);
+
+  @SuppressWarnings("AbbreviationAsWordInName")
+  public static native int getEncoderFPGAIndex(int encoderHandle);
+
+  public static native int getEncoderEncodingScale(int encoderHandle);
+
+  public static native double getEncoderDecodingScaleFactor(int encoderHandle);
+
+  public static native double getEncoderDistancePerPulse(int encoderHandle);
+
+  public static native int getEncoderEncodingType(int encoderHandle);
 }

@@ -1,30 +1,31 @@
-/*
- * To change this template, choose Tools | Templates and open the template in
- * the editor.
- */
+/*----------------------------------------------------------------------------*/
+/* Copyright (c) FIRST 2008-2017. All Rights Reserved.                        */
+/* Open Source Software - may be modified and shared by FRC teams. The code   */
+/* must be accompanied by the FIRST BSD license file in the root directory of */
+/* the project.                                                               */
+/*----------------------------------------------------------------------------*/
+
 package edu.wpi.first.wpilibj.livewindow;
 
 import edu.wpi.first.wpilibj.Sendable;
 
 /**
  * Live Window Sendable is a special type of object sendable to the live window.
- *
- * @author Alex Henning
  */
 public interface LiveWindowSendable extends Sendable {
   /**
    * Update the table for this sendable object with the latest values.
    */
-  public void updateTable();
+  void updateTable();
 
   /**
-   * Start having this sendable object automatically respond to value changes
-   * reflect the value on the table.
+   * Start having this sendable object automatically respond to value changes reflect the value on
+   * the table.
    */
-  public void startLiveWindowMode();
+  void startLiveWindowMode();
 
   /**
    * Stop having this sendable object automatically respond to value changes.
    */
-  public void stopLiveWindowMode();
+  void stopLiveWindowMode();
 }
