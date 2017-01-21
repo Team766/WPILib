@@ -8,6 +8,7 @@
 package edu.wpi.first.wpilibj;
 
 import interfaces.ConfigFileReader;
+import lib.ConstantsFileReader;
 import interfaces.MyRobot;
 import interfaces.RobotProvider;
 
@@ -200,7 +201,7 @@ public abstract class RobotBase {
 	System.load("/usr/local/frc/lib/libFRC_NetworkCommunication.so");
 	
 	ConfigFileReader.fileName = "/home/lvuser/config.txt";
-	ConfigFileReader.fileName = "/home/lvuser/constants.csv";
+	ConstantsFileReader.fileName = "/home/lvuser/constants.csv";
 	
 	RobotProvider.instance = new WPIRobotProvider();
     initializeHardwareConfiguration();

@@ -13,7 +13,7 @@ public class WPIRobotProvider extends RobotProvider{
 	@Override
 	public SpeedController getMotor(int index) {
 		if(motors[index] == null)
-			motors[index] = new Talon(index);
+			motors[index] = new Victor(index);
 		return motors[index];
 	}
 
