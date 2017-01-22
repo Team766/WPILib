@@ -24,6 +24,9 @@ import edu.wpi.cscore.VideoSource;
 import edu.wpi.first.wpilibj.networktables.NetworkTable;
 import edu.wpi.first.wpilibj.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.tables.ITable;
+import interfaces.CameraInterface;
+import interfaces.VidSourceInterface;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -33,7 +36,7 @@ import java.util.regex.Pattern;
  * Singleton class for creating and keeping camera servers.
  * Also publishes camera information to NetworkTables.
  */
-public class CameraServer {
+public class CameraServer implements CameraInterface{
   public static final int kBasePort = 1181;
 
   @Deprecated
@@ -565,10 +568,20 @@ public class CameraServer {
    * @param camera Camera
    */
   public void startAutomaticCapture(VideoSource camera) {
-    addCamera(camera);
-    VideoSink server = addServer("serve_" + camera.getName());
-    server.setSource(camera);
+	  addCamera(camera);
+	    VideoSink server = addServer("serve_" + camera.getName());
+	    server.setSource(camera);
+//	  startAutomaticCapture((VidSourceInterface)camera);
   }
+  
+
+	@Override
+	public void startAutomaticCapture(VidSourceInterface camera1) {
+		VideoSource camera = (VideoSource)camera1;
+		addCamera(camera);
+	    VideoSink server = addServer("serve_" + camera.getName());
+	    server.setSource(camera);
+	}
 
   /**
    * Adds an Axis IP camera.

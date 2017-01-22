@@ -259,6 +259,8 @@ public abstract class RobotBase {
     boolean errorOnExit = false;
     try {
       System.out.println("********** Robot program starting **********");
+      CameraServer.getInstance().startAutomaticCapture();
+      CameraServer.getInstance().addAxisCamera("axis-camera");
       robot.startCompetition();
     } catch (Throwable throwable) {
       DriverStation.reportError(

@@ -1,5 +1,6 @@
 package edu.wpi.first.wpilibj;
 
+import interfaces.CameraInterface;
 import interfaces.CameraReader;
 import interfaces.EncoderReader;
 import interfaces.GyroReader;
@@ -56,6 +57,11 @@ public class WPIRobotProvider extends RobotProvider{
 		if(joysticks[index] == null)
 			joysticks[index] = new Joystick(index);
 		return joysticks[index];
+	}
+	
+	@Override
+	public CameraInterface getCamServer(){
+		return CameraServer.getInstance();
 	}
 
 }
