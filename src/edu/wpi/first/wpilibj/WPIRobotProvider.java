@@ -2,6 +2,7 @@ package edu.wpi.first.wpilibj;
 
 import interfaces.CameraInterface;
 import interfaces.CameraReader;
+import interfaces.DigitalInputReader;
 import interfaces.EncoderReader;
 import interfaces.GyroReader;
 import interfaces.JoystickReader;
@@ -62,6 +63,13 @@ public class WPIRobotProvider extends RobotProvider{
 	@Override
 	public CameraInterface getCamServer(){
 		return CameraServer.getInstance();
+	}
+
+	@Override
+	public DigitalInputReader getDigitalInput(int index) {
+		if(digInputs[index] == null)
+			digInputs[index] = new DigitalInput(index);
+		return digInputs[index];
 	}
 
 }

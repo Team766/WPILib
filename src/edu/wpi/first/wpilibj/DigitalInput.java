@@ -7,6 +7,7 @@
 
 package edu.wpi.first.wpilibj;
 
+import interfaces.DigitalInputReader;
 import edu.wpi.first.wpilibj.hal.DIOJNI;
 import edu.wpi.first.wpilibj.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.wpilibj.hal.HAL;
@@ -20,7 +21,7 @@ import edu.wpi.first.wpilibj.tables.ITable;
  * elsewhere will automatically allocate digital inputs and outputs as required. This class is only
  * for devices like switches etc. that aren't implemented anywhere else.
  */
-public class DigitalInput extends DigitalSource implements LiveWindowSendable {
+public class DigitalInput extends DigitalSource implements LiveWindowSendable, DigitalInputReader {
   private int m_channel = 0;
   private int m_handle = 0;
 
