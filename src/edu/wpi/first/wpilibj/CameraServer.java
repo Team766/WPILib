@@ -32,6 +32,8 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.opencv.core.Mat;
+
 /**
  * Singleton class for creating and keeping camera servers.
  * Also publishes camera information to NetworkTables.
@@ -652,6 +654,10 @@ public class CameraServer implements CameraInterface{
       throw new VideoException("no camera available");
     }
     return getVideo(source);
+  }
+  
+  public void getFrame(Mat img){
+	  getVideo().grabFrame(img);
   }
 
   /**
