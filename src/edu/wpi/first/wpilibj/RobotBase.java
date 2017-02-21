@@ -21,6 +21,7 @@ import java.util.Enumeration;
 import java.util.jar.Manifest;
 
 import org.opencv.core.Core;
+import edu.wpi.cscore.UsbCamera;
 
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.hal.FRCNetComm.tInstances;
@@ -259,7 +260,9 @@ public abstract class RobotBase {
     boolean errorOnExit = false;
     try {
       System.out.println("********** Robot program starting **********");
-      CameraServer.getInstance().startAutomaticCapture();
+      UsbCamera usbCam = CameraServer.getInstance().startAutomaticCapture();
+      usbCam.setExposureManual(0);
+      usbCam.setExposureHoldCurrent();
       CameraServer.getInstance().addAxisCamera("axis-camera");
       robot.startCompetition();
     } catch (Throwable throwable) {
