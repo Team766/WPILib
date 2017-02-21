@@ -716,6 +716,15 @@ public class CameraServer implements CameraInterface{
     startAutomaticCapture(source);
     return source;
   }
+  
+  private CvSource vidSource;
+  public void putFrame(Mat img){
+	  if(vidSource == null){
+		  vidSource = putVideo("VisionTracking", img.width(), img.height());
+	  }
+	  
+	  vidSource.putFrame(img);
+  }
 
   /**
    * Adds a MJPEG server at the next available port.
