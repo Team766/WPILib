@@ -1,5 +1,6 @@
 package edu.wpi.first.wpilibj;
 
+import interfaces.AnalogInputReader;
 import interfaces.CameraInterface;
 import interfaces.CameraReader;
 import interfaces.DigitalInputReader;
@@ -70,6 +71,12 @@ public class WPIRobotProvider extends RobotProvider{
 		if(digInputs[index] == null)
 			digInputs[index] = new DigitalInput(index);
 		return digInputs[index];
+	}
+	
+	public AnalogInputReader getAnalogInput(int index){
+		if(angInputs[index] == null)
+			angInputs[index] = new AnalogInput(index);
+		return angInputs[index];
 	}
 
 }

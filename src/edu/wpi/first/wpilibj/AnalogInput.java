@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.livewindow.LiveWindowSendable;
 import edu.wpi.first.wpilibj.tables.ITable;
 import edu.wpi.first.wpilibj.util.AllocationException;
+import interfaces.AnalogInputReader;
 
 /**
  * Analog channel class.
@@ -30,7 +31,7 @@ import edu.wpi.first.wpilibj.util.AllocationException;
  * accumulated effectively increasing the resolution, while the averaged samples are divided by the
  * number of samples to retain the resolution, but get more stable values.
  */
-public class AnalogInput extends SensorBase implements PIDSource, LiveWindowSendable {
+public class AnalogInput extends SensorBase implements PIDSource, LiveWindowSendable, AnalogInputReader {
 
   private static final int kAccumulatorSlot = 1;
   int m_port; // explicit no modifier, private and package accessable.
