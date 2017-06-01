@@ -16,7 +16,7 @@ public class WPIRobotProvider extends RobotProvider{
 	@Override
 	public SpeedController getMotor(int index, boolean isTalon) {
 		if(motors[index] == null){
-			motors[index] = isTalon ? new TalonSRX(index) : new Victor(index);
+			motors[index] = isTalon ? new CANTalonSpeedController(index) : new Victor(index);
 		}
 		
 		return motors[index];
