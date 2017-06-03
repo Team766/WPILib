@@ -84,7 +84,7 @@ public class WPIRobotProvider extends RobotProvider{
 	
 	public DigitalOut getDigitalOutput(int index) {
 		if(digOut[index] == null)
-			digOut[index] = new DigitalOutput(index);
+			digOut[index] = new Relay(index);
 		return digOut[index];
 	}
 

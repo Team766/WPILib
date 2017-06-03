@@ -7,6 +7,8 @@
 
 package edu.wpi.first.wpilibj;
 
+import static java.util.Objects.requireNonNull;
+import interfaces.DigitalOut;
 import edu.wpi.first.wpilibj.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.wpilibj.hal.HAL;
 import edu.wpi.first.wpilibj.hal.RelayJNI;
@@ -14,8 +16,6 @@ import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.livewindow.LiveWindowSendable;
 import edu.wpi.first.wpilibj.tables.ITable;
 import edu.wpi.first.wpilibj.tables.ITableListener;
-
-import static java.util.Objects.requireNonNull;
 
 /**
  * Class for VEX Robotics Spike style relay outputs. Relays are intended to be connected to Spikes
@@ -26,7 +26,7 @@ import static java.util.Objects.requireNonNull;
  * channels (forward and reverse) to be used independently for something that does not care about
  * voltage polarity (like a solenoid).
  */
-public class Relay extends SensorBase implements MotorSafety, LiveWindowSendable {
+public class Relay extends SensorBase implements MotorSafety, LiveWindowSendable, DigitalOut {
   private MotorSafetyHelper m_safetyHelper;
 
   /**
@@ -203,6 +203,13 @@ public class Relay extends SensorBase implements MotorSafety, LiveWindowSendable
         // Cannot hit this, limited by Value enum
     }
   }
+  
+  public void set(boolean on){
+	  if(on)
+		  set(Value.kForward);
+	  else
+		  set(Value.kOff);
+  }
 
   /**
    * Get the Relay State.
@@ -214,7 +221,7 @@ public class Relay extends SensorBase implements MotorSafety, LiveWindowSendable
    *
    * @return The current state of the relay as a Relay::Value
    */
-  public Value get() {
+  public Value getValue() {
     if (RelayJNI.getRelay(m_forwardHandle)) {
       if (RelayJNI.getRelay(m_reverseHandle)) {
         return Value.kOn;
@@ -236,6 +243,10 @@ public class Relay extends SensorBase implements MotorSafety, LiveWindowSendable
         return Value.kOff;
       }
     }
+  }
+  
+  public boolean get(){
+	  return getValue() == Value.kForward ? true : false;
   }
 
   /**
@@ -331,11 +342,11 @@ public class Relay extends SensorBase implements MotorSafety, LiveWindowSendable
   @Override
   public void updateTable() {
     if (m_table != null) {
-      if (get() == Value.kOn) {
+      if (getValue() == Value.kOn) {
         m_table.putString("Value", "On");
-      } else if (get() == Value.kForward) {
+      } else if (getValue() == Value.kForward) {
         m_table.putString("Value", "Forward");
-      } else if (get() == Value.kReverse) {
+      } else if (getValue() == Value.kReverse) {
         m_table.putString("Value", "Reverse");
       } else {
         m_table.putString("Value", "Off");
