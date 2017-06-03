@@ -8,7 +8,7 @@
 package edu.wpi.first.wpilibj;
 
 import static java.util.Objects.requireNonNull;
-import interfaces.DigitalOut;
+import interfaces.RelayOutput;
 import edu.wpi.first.wpilibj.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.wpilibj.hal.HAL;
 import edu.wpi.first.wpilibj.hal.RelayJNI;
@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj.tables.ITableListener;
  * channels (forward and reverse) to be used independently for something that does not care about
  * voltage polarity (like a solenoid).
  */
-public class Relay extends SensorBase implements MotorSafety, LiveWindowSendable, DigitalOut {
+public class Relay extends SensorBase implements MotorSafety, LiveWindowSendable, RelayOutput {
   private MotorSafetyHelper m_safetyHelper;
 
   /**
@@ -43,13 +43,6 @@ public class Relay extends SensorBase implements MotorSafety, LiveWindowSendable
     public InvalidValueException(String message) {
       super(message);
     }
-  }
-
-  /**
-   * The state to drive a Relay to.
-   */
-  public enum Value {
-    kOff, kOn, kForward, kReverse
   }
 
   /**
@@ -203,13 +196,6 @@ public class Relay extends SensorBase implements MotorSafety, LiveWindowSendable
         // Cannot hit this, limited by Value enum
     }
   }
-  
-  public void set(boolean on){
-	  if(on)
-		  set(Value.kForward);
-	  else
-		  set(Value.kOff);
-  }
 
   /**
    * Get the Relay State.
@@ -243,10 +229,6 @@ public class Relay extends SensorBase implements MotorSafety, LiveWindowSendable
         return Value.kOff;
       }
     }
-  }
-  
-  public boolean get(){
-	  return getValue() == Value.kForward ? true : false;
   }
 
   /**

@@ -7,7 +7,6 @@
 
 package edu.wpi.first.wpilibj;
 
-import interfaces.DigitalOut;
 import edu.wpi.first.wpilibj.hal.DIOJNI;
 import edu.wpi.first.wpilibj.hal.FRCNetComm.tResourceType;
 import edu.wpi.first.wpilibj.hal.HAL;
@@ -19,7 +18,7 @@ import edu.wpi.first.wpilibj.tables.ITableListener;
  * Class to write digital outputs. This class will write digital outputs. Other devices that are
  * implemented elsewhere will automatically allocate digital inputs and outputs as required.
  */
-public class DigitalOutput extends DigitalSource implements LiveWindowSendable, DigitalOut {
+public class DigitalOutput extends DigitalSource implements LiveWindowSendable{
 
   private static final int invalidPwmGenerator = 0;
   private int m_pwmGenerator = invalidPwmGenerator;
