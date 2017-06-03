@@ -4,6 +4,7 @@ import interfaces.AnalogInputReader;
 import interfaces.CameraInterface;
 import interfaces.CameraReader;
 import interfaces.DigitalInputReader;
+import interfaces.DigitalOut;
 import interfaces.EncoderReader;
 import interfaces.GyroReader;
 import interfaces.JoystickReader;
@@ -79,6 +80,12 @@ public class WPIRobotProvider extends RobotProvider{
 		if(angInputs[index] == null)
 			angInputs[index] = new AnalogInput(index);
 		return angInputs[index];
+	}
+	
+	public DigitalOut getDigitalOutput(int index) {
+		if(digOut[index] == null)
+			digOut[index] = new DigitalOutput(index);
+		return digOut[index];
 	}
 
 }
